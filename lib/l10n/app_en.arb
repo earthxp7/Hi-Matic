@@ -1,0 +1,106 @@
+{
+    "@@locale": "en",
+    "language": "Change language",
+    "@language": {"description": "Change language"},
+
+    "start": "Tap To Start",
+    "@start": {"description": "Tap To Start"},
+
+    "touch": "Tap To Start Shopping",
+    "@touch": {"description": "Start the app"},
+ 
+    "topic": "Order Process",
+    "@topic": {"description": "Order process"},
+
+    "process1": "Select Items For Cart",
+    "@process1": {"description": "Select Items for Cart"},
+    "process2": "Choose Payment Method",
+    "@process2": {"description": "Choose payment method"},
+    "process3": "Make Payment",
+    "@process3": {"description": "Make payment"},
+    "process4": "Awaiting Delivery And Change",
+    "@process4": {"description": "Awaiting Delivery and Change"},
+
+    "category": "Category {index}",
+    "@category": {"description": "Category",
+    "placeholders":{
+        "index":{
+            "type": "String"
+        }
+    }
+},
+    "total": "Total Payment",
+    "@total":{"description": "texttotal"},
+
+    "product_details" : "Product Details",
+    "@product_details":{"description": "Product details Topic"},
+
+    "amount" : "Amount",
+    "@amount":{"description": "Number of products"},
+
+    "addMenu" :"Add To Cart",
+    "@addMenu":{"description": "Add order to cart"},
+
+    "summary" :"Order Summary",
+    "@summary":{"description": "Order summary Text"},
+
+    "payment_amount" :"Payment Total",
+    "@payment_amount":{"description": "Payment amount Text"},
+
+    "choose_payment" :"Select Payment",
+    "@choose_payment" :{"description": "Choose payment method Text"},
+
+    "cancel_order" :"Cancel Order",
+    "@Cancel_order" :{"description": "Cancel order Text Button"},
+   
+    "cash":"Cash",
+    "@Cash" :{"description": "Cash text"},
+    "promptPay":"PromptPay",
+    "@promptPay" :{"description": "PromptPay text"},
+    "true_Money":"True Money",
+    "@true_Money" :{"description": "True Money text"},
+    "weChat":"WeChat Pay",
+    "@weChat" :{"description": "WeChat Pay text"},
+    "shopee_Pay":"Shopee Pay",
+    "@shopee_Pay" :{"description": "Shopee Pay text"},
+    "rabbit":"Rabbit Line Pay",
+    "@rabbi" :{"description": "Rabbit Line Pay text"},
+    "ali_Pay":"Ali Pay",
+    "@ali_Pay" :{"description": "Ali Pay text"},
+
+    "wait":"Wait A Moment..",
+    "@wait" :{"description": "Wait A Moment text"},
+    "please_pay":"Please Pay",
+    "@please_pay" :{"description": "Please pay text"},
+    "payment_failed":"Payment Failed",
+    "@payment_failed" :{"description": "Payment failed text"},
+
+    "cancel_payment":"Cancel Payment?",
+    "@cancel_payment" :{"description": "Cancel payment? topic"},
+
+    "cancellation_reminder":"Note: If Payment Has Already Been Made The Cabinet Will Not Deliver Products",
+    "@cancellation_reminder" :{"description": "Cancellation reminder Text"},
+    
+    "confirm_cancel": "Yes",
+    "@cancel_confirm" :{"description": "cancel_confirm text"},
+
+    "not_cancel":"No",
+    "@not_cancel" :{"description": "not_confirm text"},
+
+    "system_crash":"The System Is Temporarily Down. We Apologize For The Inconvenience",
+    "@system_crash" :{"description": "system_crash text"},
+
+    "payment_completed":"Payment Completed",
+    "@payment_completed" :{"description": "payment_completed text"},
+    "product_dispenser":"The Cabinet Is Dispensing Products",
+    "@product_dispenser" :{"description": "product_dispenser text"},
+    "receive_product":"Please Receive Your Item",
+    "@receive_product" :{"description": "receive_product text"},
+    "get_change":"Please Take The Change",
+    "@get_change" :{"description": "get_change text"},
+    "thank_you":"Thank You For Using The Service",
+    "@thank_you" :{"description": "thank_you text"},
+    "unsuccessful":"Unsuccessful Payment",
+    "@unsuccessful" :{"description": "unsuccessful text"}
+
+}

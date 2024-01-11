@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../screen/ads_screen.dart';
 import '../widget_sheet/fail_payment.dart';
 import '../widget_sheet/food_option.dart';
@@ -79,19 +79,4 @@ class AdMobTimeController extends GetxController {
     timer?.cancel();
     super.onClose();
   }
-
-  /* void checkKeyboardVisibility(BuildContext context) {
-    bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
-
-    if (isKeyboardVisible) {
-      print('เปิด');
-    } else {
-      print('ปิด');
-    }
-  }*/
-
-  /* void closeKeyboard(BuildContext context) {
-    FocusScope.of(context).unfocus();
-    print('ปิดละ');
-  }*/
 }

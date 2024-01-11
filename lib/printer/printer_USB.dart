@@ -53,6 +53,9 @@ class UsbDeviceController extends GetxController {
         format: CompressFormat.png,
         quality: 95,
       );
+      String omitted(String text) {
+        return text.length <= 20 ? text : '${text.substring(0, 20)}...';
+      }
 
       var maxLength = 32;
       var Money = utf8.encode('Money');
@@ -188,6 +191,7 @@ class UsbDeviceController extends GetxController {
         String noteString = noteText.data;
         Uint8List noteBytes =
             await CharsetConverter.encode('TIS-620', noteString);*/
+
         list.addAll(imageLogo);
         list.addAll([0x20]);
         list.addAll(utf8.encode(Numqueue));
@@ -252,17 +256,21 @@ class UsbDeviceController extends GetxController {
               : 0.toDouble();
           //โค้ดชื่อไข่
           final optionKai = mealOptions.length > 2 ? mealOptions[2] : {};
+          //
           final kaiIndex =
               optionKai.containsKey('option') ? optionKai['option'] : [];
+          //
           final kai = kaiIndex.isNotEmpty ? kaiIndex[0] : {};
           final kainame = kai.containsKey('name') ? kai['name'] : '';
           final kaiprice =
               kai.containsKey('price') ? kai['price'].toDouble() : 0.toDouble();
+          //
           final kai1 = kaiIndex.isNotEmpty ? kaiIndex[1] : {};
           final kainame1 = kai1.containsKey('name') ? kai1['name'] : '';
           final kaiprice1 = kai1.containsKey('price')
               ? kai1['price'].toDouble()
               : 0.toDouble();
+          //
           final kai2 = kaiIndex.isNotEmpty ? kaiIndex[2] : {};
           final kainame2 = kai2.containsKey('name') ? kai2['name'] : '';
           final kaiprice2 = kai2.containsKey('price')
@@ -374,7 +382,7 @@ class UsbDeviceController extends GetxController {
           String padFood(String text, int foodLength) {
             final spacesToAdd = foodLength - text.length;
             if (spacesToAdd <= 0) {
-              return text; // ไม่ต้องเพิ่มช่องว่างถ้าความยาวเกินหรือเท่ากับความยาวที่ต้องการ
+              return text;
             }
             return text + ' ' * spacesToAdd;
           }
@@ -386,7 +394,8 @@ class UsbDeviceController extends GetxController {
           list.addAll(utf8.encode(paddedText));
           list.addAll(utf8.encode('$countForIndex'));
           list.addAll(utf8.encode(paddedfoodText));
-          list.addAll(utf8.encode(mealNameEN));
+          list.addAll(utf8.encode(omitted(mealNameEN)));
+
           // ลบตัวสระบนล่างออก
           /* String removeDiacritics(String text) {
             return text.replaceAll(RegExp('[่ ้ ๊ ๋ ็ ั ์ ิ ี ึ ืุ ู]'), '');
@@ -397,11 +406,8 @@ class UsbDeviceController extends GetxController {
           var maxLengthformenu = 32;
 
           //ระยะห่างคิดจากตัวอักษรเมนู
-          var Menuname = mealNameEN;
-
+          var Menuname = (omitted(mealNameEN));
           var Delete_tone_menu = removeDiacritics(Menuname);
-          print('ก่อนรีมูฟเมนู: ${Menuname.length}');
-          print('หลังรีมูฟเมนู: ${Delete_tone_menu.length}');
           var MenuLength = Delete_tone_menu.length;
           var addedTextMenuLength = MenuLength;
           var MenuToMoney = maxLengthformenu - addedTextMenuLength;
@@ -421,11 +427,11 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.selectedOption != null)
-              ? list.addAll(utf8.encode(meat))
+              ? list.addAll(utf8.encode(omitted(meat)))
               : '';
 
           //ระยะห่างคิดจากตัวอักษรเนื้อสัตว์
-          var mealOptionnames = meat;
+          var mealOptionnames = (omitted(meat));
           print('ชื่อเนื้อ: ${mealOptionname}');
           var Delete_tone_meat = removeDiacritics(mealOptionnames);
           // var Delete_tone_meat = mealOptionname;
@@ -449,11 +455,10 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.selectedlevel != null)
-              ? list.addAll(utf8.encode(spiciness))
+              ? list.addAll(utf8.encode(omitted(spiciness)))
               : '';
-          var Spicy_level = spiciness;
+          var Spicy_level = (omitted(spiciness));
           var Delete_tone_Spicylevel = removeDiacritics(Spicy_level);
-          print('หลังรีมูฟเนื้อ: ${Delete_tone_Spicylevel.length}');
           var SpicylevelLength = Spicy_level.length;
           var SpicylevelTextMeatLength = SpicylevelLength;
           var SpicylevelToMoney = maxLength - SpicylevelTextMeatLength;
@@ -472,15 +477,10 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.Kai1 != null)
-              ? list.addAll(utf8.encode(kai1))
+              ? list.addAll(utf8.encode(omitted(kainame)))
               : '';
           if (selectedFoodItem?.Kai1 != null) {
-            var Kain1 = kai1;
-            /* print('ชื่อเนื้อ: ${Kai1}');
-            var Delete_tone_Kai1 = removeDiacritics(Kain1);
-            print('ก่อนรีมูฟเนื้อ: ${Kai1.length}');
-            print('หลังรีมูฟเนื้อ: ${Delete_tone_Kai1.length}');*/
-
+            var Kain1 = (omitted(kainame));
             var Kai1Length = Kain1.length;
             var addedTextKai1Length = Kai1Length;
             var Kai1ToMoney = maxLength - addedTextKai1Length;
@@ -502,10 +502,11 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.Kai2 != null)
-              ? list.addAll(utf8.encode(kai2))
+              ? list.addAll(utf8.encode(omitted(kainame1)))
               : '';
           if (selectedFoodItem?.Kai2 != null) {
-            var Kain2 = kai2;
+            var Kain2 = (omitted(kainame1));
+            ;
             /* print('ชื่อเนื้อ: ${Kai2}');
             var Delete_tone_Kai2 = removeDiacritics(Kain2);
             print('ก่อนรีมูฟเนื้อ: ${Kai2.length}');
@@ -535,10 +536,10 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.Kai3 != null)
-              ? list.addAll(utf8.encode(kai3))
+              ? list.addAll(utf8.encode(omitted(kainame2)))
               : '';
           if (selectedFoodItem?.Kai3 != null) {
-            var Kain3 = kai3;
+            var Kain3 = (omitted(kainame2));
             /* print('ชื่อเนื้อ: ${Kai3}');
             var Delete_tone_Kai3 = removeDiacritics(Kain3);
             print('ก่อนรีมูฟเนื้อ: ${Kai3.length}');
@@ -568,10 +569,10 @@ class UsbDeviceController extends GetxController {
               ? list.addAll(utf8.encode('- '))
               : '';
           (selectedFoodItem?.selectedValue != null)
-              ? list.addAll(utf8.encode(special))
+              ? list.addAll(utf8.encode(omitted(special)))
               : '';
           if (selectedFoodItem?.selectedValue != null) {
-            var Special = special;
+            var Special = (omitted(special));
             /*  print('ชื่อเนื้อ: ${Special}');
             var Delete_tone_Special = removeDiacritics(Special);
             print('ก่อนรีมูฟเนื้อ: ${Special.length}');
@@ -657,427 +658,7 @@ class UsbDeviceController extends GetxController {
         list.addAll(utf8.encode(paddedThank));
         list.addAll(utf8.encode(Thank));
         list.addAll([0x0A, 0x0A, 0x0A]);
-        list.addAll(cutCommand);
         //ตัดกระดาษษ
-        //  list.addAll(imageLogo);
-        /* list.addAll([0x20]);
-        list.addAll(utf8.encode(Numqueue));
-        list.addAll([0x0A]);
-        list.addAll([0x20]);
-        list.addAll(Nameres);
-        list.addAll([0x0A]);
-        list.addAll([0x20]);
-        list.addAll(utf8.encode(ForCustomer));
-        list.addAll([0x0A]);
-        list.addAll([0x20]);
-        list.addAll(Choose);
-        list.addAll([0x0A]);
-        list.addAll([0x20]);
-        list.addAll(utf8.encode("Ordered at $formattedDate"));
-        list.addAll([0x0A]);
-        list.addAll([0x20]);
-        list.addAll(utf8.encode('Kiosk ID# $kiosID'));
-        list.addAll([0x0A, 0x20]);
-        list.addAll(utf8.encode('$line'));
-        list.addAll([0x0A]);
-
-        for (int i = 0; i < _foodOptionController.orders.length; i++) {
-          var currentIndex = _foodOptionController.orders[i];
-          var category = _foodOptionController.categoryValues[i];
-          final meal = (category == 'Steak')
-              ? _dataKios.steakList[currentIndex]
-              : (category == 'Drinks')
-                  ? _dataKios.drinkList[currentIndex]
-                  : (category == 'Foods')
-                      ? _dataKios.foodList[currentIndex]
-                      : (category == 'Noodles')
-                          ? _dataKios.noodleList[currentIndex]
-                          : _dataKios.coffeeList[currentIndex];
-          final mealNameTH = meal.mealNameTH;
-          final mealNameEN = meal.mealNameEN;
-          final mealOptions = meal.mealOptions;
-          final mealOption = mealOptions[i]; // ดึง mealOption จาก mealOptions
-
-          final mealOptionname = mealOption['name'];
-          final mealOptionprice = mealOption['price'];
-          final mealDescriptionTH = meal.mealDescriptionTH;
-          final mealDescriptionEN = meal.mealDescriptionEN;
-          final mealPrice = meal.mealPrice;
-          //
-          final meatOption = mealOptions[0];
-          final meatOptionIndex = meatOption['option'];
-          final MeatOption = meatOptionIndex[i];
-          final Meatname = MeatOption['name'];
-          final Meatprice = MeatOption['price'];
-          //
-          final mealOptionIndex2 = mealOptions[1];
-          final optioncategoryIndex2 = mealOptionIndex2['option'];
-          final MealOptions = optioncategoryIndex2[i];
-
-          final spicinessOptionname = MealOptions['name'];
-          final mealOptionprices = MealOptions['price'].toDouble();
-          //โค้ดชื่อไข่
-          final optionKai = mealOptions[2];
-          final kaiIndex = optionKai['option'];
-          final KaiIndex0 = kaiIndex[0];
-          final kainame0 = KaiIndex0['name'];
-          final kaiprice0 = KaiIndex0['price'].toDouble();
-          final KaiIndex1 = kaiIndex[1];
-          final kainame1 = KaiIndex1['name'];
-          final kaiprice1 = KaiIndex1['price'].toDouble();
-          final KaiIndex2 = kaiIndex[2];
-          final kainame2 = KaiIndex2['name'];
-          final kaiprice2 = KaiIndex2['price'].toDouble();
-          //โค้ดพิเศษ
-          final optionspecial = mealOptions.length > 3 ? mealOptions[3] : {};
-          final specialIndex = optionspecial.containsKey('option')
-              ? optionspecial['option']
-              : [];
-          final selectedspecial =
-              specialIndex.isNotEmpty ? specialIndex[0] : {};
-          final selectedname = selectedspecial.containsKey('name')
-              ? selectedspecial['name']
-              : '';
-          final specialprice = selectedspecial.containsKey('price')
-              ? selectedspecial['price'].toDouble()
-              : 0.toDouble();
-          final selectedFoodItemsList = (category == 'Steak')
-              ? _foodOptionController.selectedFoodItemsCat1
-              : (category == 'Drinks')
-                  ? _foodOptionController.selectedFoodItemsCat2
-                  : (category == 'Foods')
-                      ? _foodOptionController.selectedFoodItemsCat3
-                      : (category == 'Noodles')
-                          ? _foodOptionController.selectedFoodItemsCat4
-                          : _foodOptionController.selectedFoodItems;
-          var selectedFoodItem = selectedFoodItemsList[currentIndex];
-          //เนื้อสัตว์
-          var meat = selectedFoodItem.selectedOption;
-          //ความเผ็ด
-          var spiciness = selectedFoodItem.selectedlevel;
-          //เพิ่มไข่
-          var kai1 =
-              (selectedFoodItem?.Kai1 != null) ? selectedFoodItem.Kai1 : '';
-          var kai2 =
-              (selectedFoodItem?.Kai2 != null) ? selectedFoodItem.Kai2 : '';
-          var kai3 =
-              (selectedFoodItem?.Kai3 != null) ? selectedFoodItem.Kai3 : '';
-          //พิเศษ
-          var special = (selectedFoodItem?.selectedValue != null)
-              ? selectedFoodItem.selectedValue
-              : '';
-          //รายละเอียดเพิ่มเติมห
-          var textmore = (selectedFoodItem?.enteredText != null)
-              ? selectedFoodItem.enteredText
-              : '';
-          var MealNameEN = mealNameEN;
-
-          var Spiciness = spicinessOptionname;
-
-          var Special = selectedspecial;
-          var Textmore = textmore;
-
-          /*  Uint8List MealNameEN =
-              await CharsetConverter.encode('TIS-620', mealNameEN);
-          Uint8List MealOptionname =
-              await CharsetConverter.encode('TIS-620', mealOption['name']);
-
-          Uint8List Meat = await CharsetConverter.encode('TIS-620', meat);
-          Uint8List Spiciness =
-              await CharsetConverter.encode('TIS-620', spiciness);
-          Uint8List Kai1 = await CharsetConverter.encode('TIS-620', kai1);
-          Uint8List Kai2 = await CharsetConverter.encode('TIS-620', kai2);
-          Uint8List Kai3 = await CharsetConverter.encode('TIS-620', kai3);
-          Uint8List Special = await CharsetConverter.encode('TIS-620', special);
-          Uint8List Textmore =
-              await CharsetConverter.encode('TIS-620', textmore);*/
-
-          //ราคาเนื้อสัตว์
-          var totalMet = ' ${selectedFoodItem.price} ';
-          var totallevel = ' ${selectedFoodItem.level} ';
-          //ราคาไข่ดาวไม่สุก
-          var totalKai1 = (selectedFoodItem?.Kai1 != null)
-              ? ' ${selectedFoodItem.egg1}'
-              : '';
-          //ราคาไข่ดาวสุก
-          var totalKai2 = (selectedFoodItem?.Kai2 != null)
-              ? ' ${selectedFoodItem.egg2}'
-              : '';
-          // ราคาไข่เจียว
-          var totalKai3 = (selectedFoodItem?.Kai3 != null)
-              ? ' ${selectedFoodItem.egg3}'
-              : '';
-          //ราคาพิเศษ
-          var totalSpecial = (selectedFoodItem?.selectedValue != null)
-              ? ' ${selectedFoodItem.special}'
-              : '';
-          //ราคาอาหาร
-
-          var totalForIndex = ' ${mealPrice} ';
-          //จำนวนอาหาร
-          final countsList = (category == 'Steak')
-              ? _foodOptionController.countListCat1
-              : (category == 'Drinks')
-                  ? _foodOptionController.countListCat2
-                  : (category == 'Foods')
-                      ? _foodOptionController.countListCat3
-                      : (category == 'Noodles')
-                          ? _foodOptionController.countListCat4
-                          : _foodOptionController.countList;
-          var countForIndex = '${countsList[currentIndex]} x';
-          String padFood(String text, int foodLength) {
-            final spacesToAdd = foodLength - text.length;
-            if (spacesToAdd <= 0) {
-              return text; // ไม่ต้องเพิ่มช่องว่างถ้าความยาวเกินหรือเท่ากับความยาวที่ต้องการ
-            }
-            return text + ' ' * spacesToAdd;
-          }
-
-          var textfood = '';
-          var foodLength = countsList[currentIndex] < 10 ? 5 : 4;
-          var paddedfoodText = padFood(textfood, foodLength);
-          list.addAll([0x1B, 0x61, 0x00]);
-          list.addAll(utf8.encode(paddedText));
-          list.addAll(utf8.encode('$countForIndex'));
-          list.addAll(utf8.encode(paddedfoodText));
-          list.addAll(utf8.encode(mealNameEN));
-          // ลบตัวสระบนล่างออก
-          /* String removeDiacritics(String text) {
-            return text.replaceAll(RegExp('[่ ้ ๊ ๋ ็ ั ์ ิ ี ึ ืุ ู]'), '');
-          }*/
-
-          // ความยาวที่คุณต้องการให้บรรทัดมี
-          var maxLength = 30;
-          var maxLengthformenu = 32;
-
-          //ระยะห่างคิดจากตัวอักษรเมนู
-          var Menuname = mealNameEN;
-
-          var Delete_tone_menu = removeDiacritics(Menuname);
-          print('ก่อนรีมูฟเมนู: ${Menuname.length}');
-          print('หลังรีมูฟเมนู: ${Delete_tone_menu.length}');
-          var MenuLength = Delete_tone_menu.length;
-          var addedTextMenuLength = MenuLength;
-          var MenuToMoney = maxLengthformenu - addedTextMenuLength;
-          for (var i = 0; i < MenuToMoney; i++) {
-            list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-          }
-          //list.addAll(Money);
-          list.addAll(utf8.encode(totalForIndex));
-          list.addAll([0x0A]);
-          list.addAll(utf8.encode(paddeddesText));
-          list.addAll(utf8.encode('$Description'));
-          list.addAll([0x0A]);
-          list.addAll(utf8.encode(paddeddesText));
-          list.addAll(utf8.encode('- '));
-          list.addAll(utf8.encode(meat));
-
-          //ระยะห่างคิดจากตัวอักษรเนื้อสัตว์
-          var mealOptionnames = meat;
-          print('ชื่อเนื้อ: ${mealOptionname}');
-          var Delete_tone_meat = removeDiacritics(mealOptionnames);
-          // var Delete_tone_meat = mealOptionname;
-          print('ก่อนรีมูฟเนื้อ: ${mealOptionnames.length}');
-          print('หลังรีมูฟเนื้อ: ${Delete_tone_meat.length}');
-
-          var MeatLength = Delete_tone_meat.length;
-          var addedTextMeatLength = MeatLength;
-          var MeatToMoney = maxLength - addedTextMeatLength;
-          for (var i = 0; i < MeatToMoney; i++) {
-            list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-          }
-
-          // list.addAll(Money);
-          list.addAll((utf8.encode(totalMet)));
-          list.addAll([0x0A]);
-          list.addAll(utf8.encode(paddeddesText));
-          list.addAll(utf8.encode('- '));
-          list.addAll(utf8.encode(spiciness));
-          var Spicy_level = spiciness;
-          var Delete_tone_Spicylevel = removeDiacritics(Spicy_level);
-
-          print('หลังรีมูฟเนื้อ: ${Delete_tone_Spicylevel.length}');
-          var SpicylevelLength = Spicy_level.length;
-          var SpicylevelTextMeatLength = SpicylevelLength;
-          var SpicylevelToMoney = maxLength - SpicylevelTextMeatLength;
-          for (var i = 0; i < SpicylevelToMoney; i++) {
-            list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-          }
-          // list.addAll(Money);
-          list.addAll((utf8.encode(totallevel)));
-          list.addAll([0x0A]);
-          (selectedFoodItem?.Kai1 != null)
-              ? list.addAll(utf8.encode(paddeddesText))
-              : '';
-          (selectedFoodItem?.Kai1 != null)
-              ? list.addAll(utf8.encode('- '))
-              : '';
-          (selectedFoodItem?.Kai1 != null)
-              ? list.addAll(utf8.encode(kai1))
-              : '';
-          if (selectedFoodItem?.Kai1 != null) {
-            var Kain1 = kai1;
-            /* print('ชื่อเนื้อ: ${Kai1}');
-            var Delete_tone_Kai1 = removeDiacritics(Kain1);
-            print('ก่อนรีมูฟเนื้อ: ${Kai1.length}');
-            print('หลังรีมูฟเนื้อ: ${Delete_tone_Kai1.length}');*/
-
-            var Kai1Length = Kain1.length;
-            var addedTextKai1Length = Kai1Length;
-            var Kai1ToMoney = maxLength - addedTextKai1Length;
-            for (var i = 0; i < Kai1ToMoney; i++) {
-              list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-            }
-          } else {
-            '';
-          }
-          (selectedFoodItem?.Kai1 != null)
-              ? '' //list.addAll((Money))
-              : '';
-
-          (selectedFoodItem?.Kai1 != null)
-              ? list.addAll(utf8.encode(totalKai1))
-              : '';
-          (selectedFoodItem?.Kai1 != null) ? list.addAll([0x0A]) : '';
-          (selectedFoodItem?.Kai2 != null)
-              ? list.addAll(utf8.encode(paddeddesText))
-              : '';
-          (selectedFoodItem?.Kai2 != null)
-              ? list.addAll(utf8.encode('- '))
-              : '';
-          (selectedFoodItem?.Kai2 != null)
-              ? list.addAll(utf8.encode(kai2))
-              : '';
-          if (selectedFoodItem?.Kai2 != null) {
-            var Kain2 = kai2;
-            /* print('ชื่อเนื้อ: ${Kai2}');
-            var Delete_tone_Kai2 = removeDiacritics(Kain2);
-            print('ก่อนรีมูฟเนื้อ: ${Kai2.length}');
-            print('หลังรีมูฟเนื้อ: ${Delete_tone_Kai2.length}');*/
-
-            var Kai2Length = Kain2.length;
-            var addedTextKai2Length = Kai2Length;
-            var Kai2ToMoney = maxLength - addedTextKai2Length;
-            for (var i = 0; i < Kai2ToMoney; i++) {
-              list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-            }
-            // list.addAll(utf8.encode(paddeddesText));
-          } else {
-            null;
-          }
-          (selectedFoodItem?.Kai2 != null)
-              ? '' //list.addAll((Money))
-              : '';
-          (selectedFoodItem?.Kai2 != null)
-              ? list.addAll(utf8.encode(totalKai2))
-              : '';
-          (selectedFoodItem?.Kai2 != null) ? list.addAll([0x0A]) : '';
-          (selectedFoodItem?.Kai3 != null)
-              ? list.addAll(utf8.encode(paddeddesText))
-              : '';
-          (selectedFoodItem?.Kai3 != null)
-              ? list.addAll(utf8.encode('- '))
-              : '';
-          (selectedFoodItem?.Kai3 != null)
-              ? list.addAll(utf8.encode(kai3))
-              : '';
-          if (selectedFoodItem?.Kai3 != null) {
-            var Kain3 = kai3;
-            /* print('ชื่อเนื้อ: ${Kai3}');
-            var Delete_tone_Kai3 = removeDiacritics(Kain3);
-            print('ก่อนรีมูฟเนื้อ: ${Kai3.length}');
-            print('หลังรีมูฟเนื้อ: ${Delete_tone_Kai3.length}');*/
-
-            var Kai3Length = Kain3.length;
-            var addedTextKai3Length = Kai3Length;
-            var Kai3ToMoney = maxLength - addedTextKai3Length;
-            for (var i = 0; i < Kai3ToMoney; i++) {
-              list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-            }
-          } else {
-            '';
-          }
-
-          (selectedFoodItem?.Kai3 != null)
-              ? '' //list.addAll((Money))
-              : '';
-          (selectedFoodItem?.Kai3 != null)
-              ? list.addAll(utf8.encode(totalKai3))
-              : '';
-          (selectedFoodItem?.Kai3 != null) ? list.addAll([0x0A]) : '';
-
-          (selectedFoodItem?.selectedValue != null)
-              ? list.addAll(utf8.encode(paddeddesText))
-              : '';
-          (selectedFoodItem?.selectedValue != null)
-              ? list.addAll(utf8.encode('- '))
-              : '';
-          list.addAll(utf8.encode(special));
-          if (selectedFoodItem?.selectedValue != null) {
-            var Special = special;
-            var SpecialLength = Special.length;
-            var addedTextSpecialLength = SpecialLength;
-            var SpecialToMoney = maxLength - addedTextSpecialLength;
-            for (var i = 0; i < SpecialToMoney; i++) {
-              list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-            }
-            // list.addAll(utf8.encode(paddeddesText));
-          } else {
-            '';
-          }
-
-          (selectedFoodItem?.selectedValue != null)
-              ? '' //list.addAll((Money))
-              : '';
-          list.addAll(utf8.encode(totalSpecial));
-
-          (selectedFoodItem?.selectedValue != null) ? list.addAll([0x0A]) : '';
-          (selectedFoodItem?.enteredText != null)
-              ? list.addAll(utf8.encode(paddeddesText))
-              : '';
-          (selectedFoodItem?.enteredText != null)
-              ? list.addAll(utf8.encode(Note)) //list.addAll((Note))
-              : '';
-          list.addAll(utf8.encode(Textmore));
-
-          (selectedFoodItem?.enteredText != null) ? list.addAll([0x0A]) : '';
-          list.addAll([0x20]);
-          list.addAll(utf8.encode('$line'));
-          list.addAll([0x0A]);
-        }
-        list.addAll(utf8.encode(paddedText));
-        list.addAll(utf8.encode(namePay));
-        list.addAll([0x0A]);
-        list.addAll(utf8.encode(paddedText));
-        list.addAll(utf8.encode(Total));
-        //
-
-        for (var i = 0; i < TotalToMoney; i++) {
-          list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-        }
-        list.addAll(utf8.encode(allTotal));
-        list.addAll([0x0A]);
-        list.addAll(utf8.encode(paddedText));
-        list.addAll(utf8.encode(Vat));
-//
-        for (var i = 0; i < VatToMoney; i++) {
-          list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-        }
-        list.addAll(utf8.encode(VAT7));
-        list.addAll([0x0A]);
-        list.addAll(utf8.encode(paddedText));
-        list.addAll(utf8.encode(Net_price));
-//
-        for (var i = 0; i < AllTotalLengthsToMoney; i++) {
-          list.add(32); // 32 คือรหัส ASCII ของช่องว่าง
-        }
-        list.addAll([0x20]);
-        list.addAll(utf8.encode(netPrice));
-        list.addAll([0x0A, 0x0A]);
-        list.addAll(utf8.encode(paddedThank));
-        list.addAll(utf8.encode(Thank));
-        list.addAll([0x0A, 0x0A, 0x0A]);
-        list.addAll(cutCommand);*/
 
         await flutterUsbPrinter.write(Uint8List.fromList(list));
         //   await Future.delayed(Duration(seconds: 1));

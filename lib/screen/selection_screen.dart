@@ -5,6 +5,7 @@ import 'package:screen/api/Kios_API.dart';
 import 'package:screen/restaurant/image.dart';
 import 'package:screen/screen/menu_screen.dart';
 import '../Appbar/language.dart';
+import '../UI/Font/ColorSet.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
 import 'package:flutter/services.dart';
@@ -26,22 +27,21 @@ class selection_screen extends StatelessWidget {
         physics: NeverScrollableScrollPhysics(),
         child: Column(children: [
           Container(
-            height: sizeHeight * 0.045,
-            width: sizeWidth * 1,
-            decoration: BoxDecoration(
-              color: Color.fromRGBO(255, 255, 255, 1),
-              borderRadius: BorderRadius.circular(sizeWidth * 0.01),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0),
-                  spreadRadius: 2,
-                  blurRadius: 4,
-                  offset: Offset(20, 2),
-                ),
-              ],
-            ),
-            child: languageBar(),
-          ),
+              height: sizeHeight * 0.045,
+              width: sizeWidth * 1,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(255, 255, 255, 1),
+                borderRadius: BorderRadius.circular(sizeWidth * 0.01),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(1),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: languageBar()),
           GestureDetector(
             onTap: () {
               admob_times.reset(); // Reset the time countdown
@@ -103,13 +103,8 @@ class selection_screen extends StatelessWidget {
                   SizedBox(
                     height: sizeHeight * 0.02,
                   ),
-                  Text(
-                    'Order For Dine-In Or Take Away?',
-                    style: TextStyle(
-                        fontSize: sizeWidth * 0.045,
-                        fontFamily: 'SukhumvitSet-Medium',
-                        fontWeight: FontWeight.bold),
-                  ),
+                  Text('เลือกทานอาหารที่ร้าน หรือ สั่งกลับบ้าน?',
+                      style: Fonts(context, 0.045, true, Colors.black)),
                   SizedBox(
                     height: sizeHeight * 0.02,
                   ),
@@ -161,13 +156,9 @@ class selection_screen extends StatelessWidget {
                                 Transform.translate(
                                   offset: Offset(50.0,
                                       -90.0), // กำหนดตำแหน่งแนวนอนและแนวตั้งให้รูปภาพขยับไปทางขวา 50.0 และลงล่าง 100.0
-                                  child: Text(
-                                    "Dine-In",
-                                    style: TextStyle(
-                                        fontSize: sizeWidth * 0.04,
-                                        fontFamily: 'SukhumvitSet-Medium',
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  child: Text("ทานอาหารที่ร้าน",
+                                      style: Fonts(
+                                          context, 0.038, true, Colors.black)),
                                 )
                               ],
                             ),
@@ -218,13 +209,9 @@ class selection_screen extends StatelessWidget {
                                 Transform.translate(
                                     offset: Offset(-15.0,
                                         -90.0), // กำหนดตำแหน่งแนวนอนและแนวตั้งให้รูปภาพขยับไปทางขวา 50.0 และลงล่าง 100.0
-                                    child: Text(
-                                      "Take Away",
-                                      style: TextStyle(
-                                          fontSize: sizeWidth * 0.04,
-                                          fontFamily: 'SukhumvitSet-Medium',
-                                          fontWeight: FontWeight.bold),
-                                    ))
+                                    child: Text("สั่งกลับบ้าน",
+                                        style: Fonts(context, 0.038, true,
+                                            Colors.black)))
                               ],
                             ),
                           ),

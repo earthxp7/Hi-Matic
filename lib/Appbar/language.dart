@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:screen/api/Kios_API.dart';
-
-import '../alert/logout.dart';
+import '../alert/identity.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class languageBar extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class languageBar extends StatelessWidget {
     final dataKios _dataKios = Get.put(dataKios());
     final DateLog = _foodOptionController.formattedDate;
     String SettingPage = 'Enter the settings panel : ${DateLog}';
-    //  final language_controller = Get.put(Status_controller());
+
     List Language = [
       'assets/Language/Thai.png',
       'assets/Language/English.png',
@@ -53,7 +53,7 @@ class languageBar extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'เปลี่ยนภาษา',
+                AppLocalizations.of(context).language,
                 style: TextStyle(
                   fontSize: sizeWidth * 0.026,
                   fontFamily: 'SukhumvitSet-Medium',

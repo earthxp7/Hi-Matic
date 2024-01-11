@@ -14,6 +14,9 @@ class menuUI extends StatelessWidget {
       Get.put(FoodOptionController());
   final dataKios _dataKios = Get.put(dataKios());
   int clickedId = null;
+  String removeDiacritics(String text) {
+    return text.replaceAll(RegExp('[่ ้ ๊ ๋ ็ ั ์ ิ ี ึ ืุ ู]'), '');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,12 +164,12 @@ class menuUI extends StatelessWidget {
                                     },
                                     child: Obx(() => Text(
                                           (_dataKios.language.value == 'en')
-                                              ? mealNameEN.length <= 40
+                                              ? mealNameEN.length <= 70
                                                   ? mealNameEN
                                                   : '${mealNameEN.substring(0, 70)}...'
-                                              : mealNameTH.length <= 40
+                                              : mealNameTH.length <= 70
                                                   ? mealNameTH
-                                                  : '${mealNameTH.substring(0, 70)}...',
+                                                  : '${mealNameTH.substring(0, mealNameTH - 70)}...',
                                           style: TextStyle(
                                               fontSize: sizeWidth * 0.036,
                                               fontFamily: 'SukhumvitSet-Medium',
@@ -180,10 +183,10 @@ class menuUI extends StatelessWidget {
                                 width: sizeWidth * 0.5,
                                 child: Obx(() => Text(
                                       (_dataKios.language.value == 'en')
-                                          ? mealDescriptionEN.length <= 40
+                                          ? mealDescriptionEN.length <= 70
                                               ? mealDescriptionEN
                                               : '${mealDescriptionEN.substring(0, 70)}...'
-                                          : mealDescriptionTH.length <= 40
+                                          : mealDescriptionTH.length <= 70
                                               ? mealDescriptionTH
                                               : '${mealDescriptionTH.substring(0, 70)}...',
                                       style: TextStyle(

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../screen/selection_screen.dart';
 import '../widget_sheet/food_option.dart';
 import 'adtime.dart';

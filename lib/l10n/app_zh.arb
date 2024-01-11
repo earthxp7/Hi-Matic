@@ -1,0 +1,57 @@
+{
+    "@@locale": "zh",
+    "language": "改變語言",
+    "touch" : "點擊即可開始購物",
+
+    "topic": "訂單流程",
+    "start": "點擊開始",
+    "process1": "選擇要加入購物車的產品",
+    "process2": "選擇付款方式",
+    "process3": "付款",
+    "process4": "等待收到產品並更改",
+     
+    "category": "類別 {index}",
+    "@category": {"description": "Category",
+    "placeholders":{
+        "index":{
+            "type": "String"
+        }
+}
+    },
+    "total": "付款總額",
+    "product_details":"產品詳情",
+    "amount": "數量",
+    "addMenu":"加入購物車",
+    "summary" :"訂單匯總",
+    "payment_amount" :"支付金額",
+    "choose_payment" :"選擇付款方式",
+    "cancel_order" :"取消訂單",
+
+    "cash":"Cash",
+    "promptPay":"PromptPay",
+    "true_Money":"True Money",
+    "weChat":"WeChat Pay",
+    "shopee_Pay":"Shopee Pay",
+    "rabbit":"Rabbit Line Pay",
+    "ali_Pay":"Ali Pay",
+
+    "wait":"請稍候..",
+    "please_pay":"請付款",
+    "payment_failed":"支付失敗",
+
+    "cancel_payment":"取消付款",
+    "cancellation_reminder":"注：如果已经付款柜子不会发货",
+    "confirm_cancel": "是的",
+    "not_cancel":"不",
+
+    "system_crash":"系统暂时故障 为不便之处致以歉意",
+
+    "payment_completed":"付款完成",
+    "product_dispenser":"柜子正在分发产品",
+    "receive_product":"请收到您的物品",
+    "get_change":"请拿零钱",
+    "thank_you":"感谢您使用该服务",
+    "unsuccessful":"付款失败"
+
+
+}

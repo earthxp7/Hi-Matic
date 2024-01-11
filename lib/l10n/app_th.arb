@@ -1,0 +1,58 @@
+{
+    "@@locale": "th",
+    "language": "เปลี่ยนภาษา",
+    "touch" : "แตะเพื่อเริ่มซื้อสินค้า",
+    
+    "topic": "ขั้นตอนการสั่งซื้อ",
+    "start": "แตะเพื่อเริ่มต้น",
+    "process1": "เลือกสินค้าลงตะกร้า",
+    "process2": "เลือกวิธีการชำระเงิน",
+    "process3": "ชำระเงิน",
+    "process4": "รอรับสินค้าและเงินทอน",
+     
+    "category": "หมวดหมู่ที่ {index}",
+    "@category": {"description": "Category",
+    "placeholders":{
+        "index":{
+            "type": "String"
+        }
+   }
+ },
+
+    "total": "ยอดชำระทั้งหมด",
+    "product_details": "รายละเอียดสินค้า",
+    "amount": "จำนวน",
+    "addMenu":"เพิ่มลงในตะกร้า",
+    "summary" :"สรุปรายการสั่งซื้อ",
+    "payment_amount" :"ยอดชำระ",
+    "choose_payment" :"เลือกวิธีการชำระเงิน",
+    "cancel_order" :"ยกเลิกคำสั่งซื้อ",
+
+    "cash":"เงินสด",
+    "promptPay":"พร้อมเพย์",
+    "true_Money":"ทรู มันนี่",
+    "weChat":"วีแชท เพย์",
+    "shopee_Pay":"ช้อปปี้ เพย์",
+    "rabbit":"แรบบิท ไลน์ เพย์",
+    "ali_Pay":"อาลี เพย์",
+
+    "wait":"กรุณารอสักครู่..",
+    "please_pay":"กรุณาชำระเงิน",
+    "payment_failed":"ชำระเงินไม่สำเร็จ",
+
+    "cancel_payment":"ยกเลิกการชำระเงินหรือไม่",
+    "cancellation_reminder":"หมายเหตุ: หากชำระเงินเรียบร้อยแล้ว ตู้จะไม่นำจ่ายสินค้า",
+    "confirm_cancel": "ใช่",
+    "not_cancel":"ไม่",
+
+    "system_crash":"ระบบขัดข้องชั่วคราวขออภัยในความไม่สะดวก",
+
+    "payment_completed":"ชำระเงินสำเร็จ",
+    "product_dispenser":"ตู้กำลังจ่ายสินค้า",
+    "receive_product":"กรุณารับสินค้าของคุณ",
+    "get_change":"กรุณารับเงินทอน",
+    "thank_you":"ขอบคุณที่ใช้บริการ",
+    "unsuccessful":"จ่ายสินค้าไม่สำเร็จ"
+
+}
+    

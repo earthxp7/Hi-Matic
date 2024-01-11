@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:screen/getxController.dart/amount_food.dart';
 import 'package:screen/widget_sheet/successful_payment.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../timeControl/adtime.dart';
 import '../timeControl/waiting _for_success.dart';
 import 'payment_option.dart';

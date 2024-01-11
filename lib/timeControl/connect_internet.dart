@@ -7,7 +7,7 @@ import 'package:screen/timeControl/waiting%20_for_success.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../screen/loadOrder_screen.dart';
 import '../screen/notAvailable_screen.dart';
 import '../widget_sheet/fail_payment.dart';
@@ -16,12 +16,16 @@ import '../widget_sheet/myorder.dart';
 
 class connectNetwork extends GetxController {
   final dataKios _dataKios = Get.put(dataKios());
-  RxBool notcon = false.obs;
+  RxBool Internet = false.obs;
   RxString Network = ''.obs;
   final int connect;
   RxInt remainingSeconds = 0.obs;
+  RxBool isConnected = false.obs;
+  RxInt k = 0.obs;
   Timer timer;
-  final NotAvailable notConnect = Get.put(NotAvailable());
+  String HeadTextError = "ขออภัยในความไม่สะดวก";
+  String TextError = "โปรดตรวจสอบสัญญาณอินเตอร์เน็ตของท่าน";
+  final notConnect = NotAvailable;
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
 
@@ -82,15 +86,15 @@ class connectNetwork extends GetxController {
 
   void ConnectNewtwork(BuildContext context) async {
     try {
-      bool isConnected = await checkInternetConnection();
+      print('เช็คเน็ต');
+      isConnected.value = await checkInternetConnection();
       //  timer?.cancel();
-      await reset();
       // await stopTimerAndReset();
-
       remainingSeconds.value = connect;
-      if (isConnected) {
-        if (notcon.value == true) {
-          print('notcon.value == true ทำสำเร็จ');
+      if (isConnected.value) {
+        if (Internet.value == true) {
+          print('ต่อเน็ต if');
+          reqKios();
           Network.value = 'Connected to the internet';
           Get.delete<FoodOptionController>();
           Get.delete<MyOrder>();
@@ -111,11 +115,13 @@ class connectNetwork extends GetxController {
               },
             ),
           );
-          notcon.value = false;
+          Internet.value = false;
         } else {
           Network.value = 'Connected to the internet';
+          print('ต่อเน็ต else');
         }
       } else {
+        print('ไม่ต่อเน็ต');
         final waiting_for_success waitss =
             Get.put(waiting_for_success(connect));
         waitss.stopTimerAndReset();
@@ -128,7 +134,7 @@ class connectNetwork extends GetxController {
                     // Return false to prevent the user from navigating back
                     return false;
                   },
-                  child: NotAvailable());
+                  child: NotAvailable(HeadTextError, TextError));
             },
           ),
         );
@@ -147,17 +153,18 @@ class connectNetwork extends GetxController {
   }
 
   void startTimer(BuildContext context) {
+    k++;
+    print('ค่าา k : ${k.value}');
     const oneSecond = Duration(seconds: 1);
     timer = Timer.periodic(oneSecond, (timer) {
-      //   print('เวลาเช็คอินเตอร์เน็ต : ${notcon.value}');
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
-        // print('reconnect ${remainingSeconds.value}');
+        print('เวลาเช็คเน็ต ${remainingSeconds.value}');
       } else if (remainingSeconds.value == 0) {
-        //  print('reconnectElse ${remainingSeconds.value}');
-        reqKios();
-
+        print('เช็คเน็ต');
+        ConnectNewtwork(context);
         writeLog(context);
+        reset();
       }
     });
   }

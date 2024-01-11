@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:screen/screen/menu_screen.dart';
 import '../UI/Font/ColorSet.dart';
 import '../api/Kios_API.dart';
@@ -49,9 +48,8 @@ class food_option extends StatelessWidget {
                 : (cat == 'Noodles')
                     ? _foodOptionController.selectedFoodItemsCat4
                     : _foodOptionController.selectedFoodItems;
-    if (/*selectedFoodItemsList[index].selectedOption != null &&
-        selectedFoodItemsList[index].selectedlevel != null &&*/
-
+    if (selectedFoodItemsList[index].selectedOption != null &&
+        selectedFoodItemsList[index].selectedlevel != null &&
         counts > 0) {
       _foodOptionController.pushorder(currentIndex, category);
       String addOrder =
@@ -77,32 +75,25 @@ class food_option extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(16), // Adjust the radius as needed
             ),
-            title: Text(
-              'Incomplete Food Information',
-              style: GoogleFonts.kanit(
-                fontSize: 42,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-            ),
+            title: Text('กรุณาเลือกรายละเอียดอาหารให้ครบถ้วน',
+                style: Fonts(context, 0.035, true, Colors.red)),
             content: Text(
-              'Please Choose Your Meat And Spiciness Level.',
-              style: GoogleFonts.kanit(
-                fontSize: 28,
-              ),
-            ),
+                'ตรวจสอบข้อมูลอาหารของท่าน(เช่น เนื้อสัตว์ ระดับความเผ็ด)',
+                style: Fonts(context, 0.025, false, Colors.black)),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text(
-                  'OK',
-                  style: GoogleFonts.kanit(
-                    fontSize: 34,
-                    color: Colors.blue,
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue,
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                child: Text('ตกลง',
+                    style: Fonts(context, 0.03, true, Colors.white)),
               ),
             ],
           );
@@ -249,19 +240,6 @@ class food_option extends StatelessWidget {
                                   String Back =
                                       'Go to menu page : ${_foodOptionController.formattedDate}';
                                   LogFile(Back);
-                                  /*  _foodOptionController.cancel.value = 'cancel';
-                                  int cancelOrder = _foodOptionController
-                                          .cancelpush.value +
-                                      _foodOptionController.cancelremove.value;
-                                  int Totalcancel = _foodOptionController
-                                          .cancelpushTotal.value -
-                                      _foodOptionController
-                                          .cancelremoveTotal.value;
-
-                                  _foodOptionController.total_price.value -
-                                      Totalcancel;
-                                  _foodOptionController.numorder.value -
-                                      cancelOrder;*/
 
                                   Navigator.push(
                                     context,
@@ -271,12 +249,6 @@ class food_option extends StatelessWidget {
                                               foodOptionCategory: category,
                                             )),
                                   );
-                                  //
-                                  /* _foodOptionController.cancelpush.value = 0;
-                                  _foodOptionController.cancelremove.value = 0;
-                                  _foodOptionController.cancelpushTotal.value = 0;
-                                  _foodOptionController.cancelremoveTotal.value =
-                                      0;*/
                                 },
                               ),
                             ),
@@ -910,7 +882,7 @@ class food_option extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 30, left: 110),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Note',
+                        child: Text('เพิ่มเติม', //'Note',
                             style: Fonts(context, 0.03, false, Colors.black)),
                       )),
                   Column(
@@ -925,7 +897,8 @@ class food_option extends StatelessWidget {
                               style: Fonts(context, 0.035, false, Colors.black),
                               onChanged: (text) {},
                               decoration: InputDecoration(
-                                labelText: 'e.g. No Vegetables',
+                                labelText:
+                                    '  เช่น ไม่ใส่ผัก', //'e.g. No Vegetables',
                                 labelStyle: Fonts(context, 0.035, false,
                                     Color.fromRGBO(214, 214, 214, 1)),
                                 border: OutlineInputBorder(),
@@ -1075,7 +1048,7 @@ class food_option extends StatelessWidget {
                                         padding:
                                             const EdgeInsets.only(left: 80),
                                         child: Text(
-                                            'Add To List            ${_foodOptionController.calculateTotal(currentIndex, category)} ฿',
+                                            /*'Add To List  */ 'เพิ่มไปยังรายการ          ${_foodOptionController.calculateTotal(currentIndex, category)} ฿',
                                             style: Fonts(context, 0.042, false,
                                                 Colors.white)),
                                       ),

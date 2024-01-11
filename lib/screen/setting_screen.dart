@@ -8,12 +8,14 @@ import 'package:flutter_usb_printer/flutter_usb_printer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:screen/getxController.dart/printer_Test.dart';
 import 'package:screen/screen/menu_screen.dart';
+import 'package:screen/screen/selection_screen.dart';
+import '../UI/Font/ColorSet.dart';
 import '../api/Kios_API.dart';
 import 'package:image/image.dart' as img;
+import '../getxController.dart/printer_setting.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../timeControl/adtime.dart';
 
 _launchNetWorkSettings() {
@@ -47,6 +49,8 @@ class Setting_Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController IP_Printer =
+        TextEditingController(text: printer_Test.ipAddresses.value);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final int admob_time = 60;
     final sizeHeight = MediaQuery.of(context).size.height;
@@ -67,21 +71,8 @@ class Setting_Screen extends StatelessWidget {
                     Transform.translate(
                       offset: Offset(400.0, 0.0),
                       child: Text("Settings screen",
-                          style: GoogleFonts.roboto(
-                            fontSize: sizeHeight * 0.02,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          )),
+                          style: Fonts(context, 0.04, true, Colors.white)),
                     ),
-                    Transform.translate(
-                      offset: Offset(650.0, 0.0),
-                      child: Image.asset(
-                        'assets/logoHI-TOP.jpg',
-                        height: sizeHeight * 0.55,
-                        width: sizeWidth * 0.15,
-                        fit: BoxFit.contain,
-                      ),
-                    )
                   ],
                 ),
               ),
@@ -97,7 +88,6 @@ class Setting_Screen extends StatelessWidget {
                         String Category =
                             'Settings category ${settingName[index]} : ${_foodOptionController.formattedDate}';
                         LogFile(Category);
-
                         //ปิดแอพพลิเคชั่น
                         if (settingName[index] == 'Close The App') {
                           showDialog(
@@ -396,83 +386,77 @@ class Setting_Screen extends StatelessWidget {
                                   use)
                                 Expanded(
                                   child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child:
-                                          DropdownButton<Map<String, dynamic>>(
-                                        key: UniqueKey(),
-                                        value:
-                                            printer_Test.selectedRadio.value ==
+                                    alignment: Alignment.centerRight,
+                                    child: (_foodOptionController
+                                                .printerValue.value ==
+                                            'USB')
+                                        ? DropdownButton<Map<String, dynamic>>(
+                                            key: UniqueKey(),
+                                            value: printer_Test
+                                                        .selectedRadio.value ==
                                                     use
                                                 ? printer_Test
                                                     .selectedDropdownValues[use]
                                                 : null,
-                                        onChanged:
-                                            (Map<String, dynamic> newValue) {
-                                          printer_Test
-                                                  .selectedDropdownValues[use] =
-                                              newValue;
-                                          /*print(
+                                            onChanged: (Map<String, dynamic>
+                                                newValue) {
+                                              printer_Test
+                                                      .selectedDropdownValues[
+                                                  use] = newValue;
+                                              /*print(
                                               'Radio is ${_foodOptionController.printerValue.value}');
                                           String printer =
                                               'Printer  : ${_foodOptionController.formattedDate} ${newValue['vendorId']} - ${newValue['productId']}';
 
                                           LogFile(printer);*/
-                                          adtimeController.reset();
-                                        },
-                                        items: (_foodOptionController
-                                                    .printerValue.value ==
-                                                'USB')
-                                            ? printer_Test.devices.value.map<
-                                                DropdownMenuItem<
-                                                    Map<String, dynamic>>>(
-                                                (Map<String, dynamic> device) {
-                                                  return DropdownMenuItem<
-                                                      Map<String, dynamic>>(
-                                                    value: device,
-                                                    child: Text(
-                                                      'VID : ${device['vendorId']} , PID : ${device['productId']}',
-                                                      style: GoogleFonts.kanit(
-                                                        fontSize:
-                                                            sizeHeight * 0.012,
-                                                        color: Colors.black,
-                                                      ),
+                                              adtimeController.reset();
+                                            },
+                                            items: printer_Test.devices.value
+                                                .map<
+                                                    DropdownMenuItem<
+                                                        Map<String, dynamic>>>(
+                                              (Map<String, dynamic> device) {
+                                                return DropdownMenuItem<
+                                                    Map<String, dynamic>>(
+                                                  value: device,
+                                                  child: Text(
+                                                    'VID : ${device['vendorId']} , PID : ${device['productId']}',
+                                                    style: GoogleFonts.kanit(
+                                                      fontSize:
+                                                          sizeHeight * 0.012,
+                                                      color: Colors.black,
                                                     ),
-                                                  );
-                                                },
-                                              ).toList()
-                                            : (_foodOptionController
-                                                        .printerValue.value ==
-                                                    'LAN')
-                                                ? printer_Test.ipAddresses.value
-                                                    .map<
-                                                        DropdownMenuItem<
-                                                            Map<String,
-                                                                dynamic>>>(
-                                                    (Map<String, dynamic>
-                                                        ipAddress) {
-                                                      return DropdownMenuItem<
-                                                          Map<String, dynamic>>(
-                                                        value: ipAddress,
-                                                        child: Text(
-                                                          'IP : ${ipAddress['ipAddress']}',
-                                                          style:
-                                                              GoogleFonts.kanit(
-                                                            fontSize:
-                                                                sizeHeight *
-                                                                    0.012,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ).toList()
-                                                : [],
-                                        underline: Container(
-                                          height: 1,
-                                          color: Colors.black,
-                                        ),
-                                      )),
-                                ),
+                                                  ),
+                                                );
+                                              },
+                                            ).toList())
+                                        : Container(
+                                            width: sizeWidth * 0.3,
+                                            child: TextField(
+                                              style: Fonts(context, 0.02, false,
+                                                  Colors.black),
+                                              onChanged: (text) {
+                                                printer_Test.ipAddresses.value =
+                                                    text;
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: '  ใส่ IP ของคุณ',
+                                                labelStyle: Fonts(
+                                                  context,
+                                                  0.02,
+                                                  false,
+                                                  Color.fromRGBO(37, 37, 37, 1),
+                                                ),
+                                                border: OutlineInputBorder(),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        vertical: 0.5),
+                                              ),
+                                              controller: IP_Printer,
+                                            ),
+                                          ),
+                                  ),
+                                )
                             ],
                           ),
                           contentPadding: EdgeInsets.symmetric(
@@ -603,7 +587,7 @@ class Setting_Screen extends StatelessWidget {
                                     onWillPop: () async {
                                       return false;
                                     },
-                                    child: menu_screen(),
+                                    child: selection_screen(),
                                   );
                                 },
                               ),

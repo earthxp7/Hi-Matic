@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import '../UI/Font/ColorSet.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
@@ -52,34 +55,21 @@ class fail_pay_screen extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(top: 100),
-                            child: Text(
-                              'ชำระเงินล้มเหลว',
-                              style: GoogleFonts.kanit(
-                                fontSize: sizeWidth * 0.045,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: Text('ชำระเงินล้มเหลว',
+                                style:
+                                    Fonts(context, 0.045, true, Colors.black)),
                           ),
                         ],
                       ),
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'Payment Failed!',
-                          style: GoogleFonts.kanit(
-                            fontSize: sizeWidth * 0.032,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Text('Payment Failed!',
+                            style: Fonts(context, 0.032, true, Colors.black)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 40),
-                        child: Text(
-                          formattedDate,
-                          style: GoogleFonts.kanit(
-                            fontSize: sizeWidth * 0.03,
-                          ),
-                        ),
+                        child: Text(formattedDate,
+                            style: Fonts(context, 0.03, false, Colors.black)),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20, bottom: 100),
@@ -103,20 +93,14 @@ class fail_pay_screen extends StatelessWidget {
                           borderRadius: BorderRadius.all(
                             Radius.circular(16.0),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 50),
-                            child: Container(
-                              height: sizeHeight * 0.065,
-                              width: sizeWidth * 0.65,
-                              color: Color.fromARGB(255, 225, 222, 222),
-                              child: Center(
-                                child: Text(
-                                  'Please Try Again',
-                                  style: GoogleFonts.kanit(
-                                    fontSize: sizeWidth * 0.04,
-                                  ),
-                                ),
-                              ),
+                          child: Container(
+                            height: sizeHeight * 0.065,
+                            width: sizeWidth * 0.65,
+                            color: Color.fromARGB(255, 225, 222, 222),
+                            child: Center(
+                              child: Text('ลองใหม่อีกครั้ง',
+                                  style: Fonts(
+                                      context, 0.04, false, Colors.black)),
                             ),
                           ),
                         ),

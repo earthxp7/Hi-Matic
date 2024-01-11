@@ -12,8 +12,10 @@ import 'package:screen/timeControl/waiting_for_payment.dart';
 import 'package:screen/widget_sheet/payment_option.dart';
 import 'package:screen/widget_sheet/successful_payment.dart';
 import 'package:http/http.dart' as http;
+import '../UI/Menu/total_in_widget.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_LAN.dart';
+import '../printer/printer_USB.dart';
 import '../timeControl/adtime.dart';
 import '../timeControl/waiting _for_success.dart';
 import 'package:flutter/services.dart';
@@ -209,7 +211,8 @@ class pay_scan_bottomsheet extends StatelessWidget {
       pay_time_controller.stopTimerAndReset();
       successful_time_controller.startTimer(context);
       if (usbDeviceController.connected.value) {
-        usbDeviceController.prints();
+        await usbDeviceController.prints();
+        await printToNetworkPrinter();
         _dataKios.Qrpayment = [];
 
         //   postMenu();
@@ -226,7 +229,7 @@ class pay_scan_bottomsheet extends StatelessWidget {
               return WillPopScope(
                 onWillPop: () async {
                   // Return false to prevent the bottom sheet from being closed
-                  return false;
+                  return true;
                 },
                 child: successful_payment(),
               );
@@ -248,7 +251,7 @@ class pay_scan_bottomsheet extends StatelessWidget {
 
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       checkStatus(context);
-      print('จ่ายเงิน : ${_dataKios.status.value}');
+
       if (_dataKios.status.value == 'SUCCESS') {
         timer.cancel();
       }
@@ -273,52 +276,6 @@ class pay_scan_bottomsheet extends StatelessWidget {
     final int admob_time = 60;
     final AdMobTimeController adtimeController =
         Get.put(AdMobTimeController(admob_time));
-    /*
-    void checkStatus() {
-      print('Status : ${_dataKios.status.value}');
-      if (_dataKios.status.value == 'SUCCESS') {
-        adtimeController.stopTimerAndReset();
-        pay_time_controller.stopTimerAndReset();
-        successful_time_controller.startTimer(context);
-        if (usbDeviceController.connected.value) {
-          if (_dataKios.queue.value == 99) {
-            _dataKios.queue.value = 1;
-          } else {
-            _dataKios.queue.value++;
-          }
-          usbDeviceController.prints();
-          String conNect =
-              'Printer connected : ${_foodOptionController.formattedDate}';
-          LogFile(conNect);
-        } else {
-          String Notcon =
-              'Printer is not connected : ${_foodOptionController.formattedDate}';
-          LogFile(Notcon);
-          print('Printer is not connected');
-        }
-        _dataKios.Qrpayment = [];
-        //   postMenu();
-        showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            useRootNavigator: true,
-            isDismissible: false,
-            enableDrag: false,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            builder: (context) {
-              return WillPopScope(
-                onWillPop: () async {
-                  // Return false to prevent the bottom sheet from being closed
-                  return false;
-                },
-                child: successful_payment(IndexOrder: IndexOrder),
-              );
-            });
-        _dataKios.status.value = '';
-      }
-    }*/
 
     return GestureDetector(
         onTap: () {
@@ -359,40 +316,82 @@ class pay_scan_bottomsheet extends StatelessWidget {
                                             borderRadius: BorderRadius.circular(
                                                 16), // Adjust the radius as needed
                                           ),
-                                          title: Text('Cancel payment',
+                                          title: Text('ยกเลิกการชำระเงิน',
                                               style: Fonts(context, 0.045, true,
                                                   Colors.red)),
                                           content: Text(
-                                              'You want to cancel payment?',
+                                              'คุณต้องการยกเลิกการชำระเงินหรือไม่',
                                               style: Fonts(context, 0.028,
                                                   false, Colors.black)),
                                           actions: [
-                                            TextButton(
-                                              onPressed: () {
-                                                final controller = Get.find<
-                                                    waiting_for_payment>();
-                                                controller.stopTimerAndReset();
-                                                adtimeController.reset();
-                                                Navigator.of(context).pop();
-                                                Navigator.of(context).pop();
+                                            Row(
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors.red,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 12,
+                                                            horizontal: 24),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                  child: Text('ยกเลิก',
+                                                      style: Fonts(
+                                                          context,
+                                                          0.034,
+                                                          false,
+                                                          Colors.white)),
+                                                ),
+                                                SizedBox(
+                                                  width: sizeWidth * 0.25,
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    final controller = Get.find<
+                                                        waiting_for_payment>();
+                                                    controller
+                                                        .stopTimerAndReset();
+                                                    adtimeController.reset();
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).pop();
 
-                                                String back =
-                                                    'Return to the payment channels page : ${_foodOptionController.paymentsName.value} ${_foodOptionController.formattedDate}';
-                                                LogFile(back);
-                                                _dataKios.Qrpayment = [];
-                                              },
-                                              child: Text('OK',
-                                                  style: Fonts(context, 0.034,
-                                                      false, Colors.blue)),
-                                            ),
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text('Cancel',
-                                                  style: Fonts(context, 0.034,
-                                                      false, Colors.red)),
-                                            ),
+                                                    String back =
+                                                        'Return to the payment channels page : ${_foodOptionController.paymentsName.value} ${_foodOptionController.formattedDate}';
+                                                    LogFile(back);
+                                                    _dataKios.Qrpayment = [];
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    primary: Colors.blue,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 12,
+                                                            horizontal: 24),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                  ),
+                                                  child: Text('ตกลง',
+                                                      style: Fonts(
+                                                          context,
+                                                          0.034,
+                                                          false,
+                                                          Colors.white)),
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         );
                                       },
@@ -416,7 +415,7 @@ class pay_scan_bottomsheet extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(
-                                      top: 100, right: 40),
+                                      top: 100, right: 20),
                                   child: Text('กรุณาชำระเงิน',
                                       style: Fonts(
                                           context, 0.045, true, Colors.black)),
@@ -424,7 +423,7 @@ class pay_scan_bottomsheet extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       bottom: 20, right: 20),
-                                  child: Text('Please Scan QR Code',
+                                  child: Text('Please scan QR code',
                                       style: Fonts(
                                           context, 0.035, false, Colors.black)),
                                 ),
@@ -435,9 +434,8 @@ class pay_scan_bottomsheet extends StatelessWidget {
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(right: 30),
-                                        child: Text(
-                                            'Please Make The Payment : ',
-                                            style: Fonts(context, 0.026, false,
+                                        child: Text('กรุณาชำระเงินภายใน',
+                                            style: Fonts(context, 0.035, false,
                                                 Colors.black)),
                                       ),
                                       Container(
@@ -525,13 +523,7 @@ class pay_scan_bottomsheet extends StatelessWidget {
                           color: Color.fromARGB(255, 225, 224, 223),
                           child: GestureDetector(
                             onTap: () {},
-                            child: Center(
-                                child: Obx(
-                              () => Text(
-                                  'Total Payment         ${_foodOptionController.total_price.value} ฿',
-                                  style: Fonts(
-                                      context, 0.045, true, Colors.black)),
-                            )),
+                            child: Center(child: TotalWiget()),
                           ),
                         ),
                       ),

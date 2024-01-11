@@ -7,21 +7,24 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_device_identifier/flutter_device_identifier.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screen/getxController.dart/save_menu.dart';
 import 'package:screen/screen/ads_screen.dart';
 import 'package:screen/timeControl/connect_internet.dart';
+import '../UI/Font/ColorSet.dart';
 import '../api/Kios_API.dart';
-import 'package:connectivity/connectivity.dart';
+import '../getxController.dart/printer_setting.dart';
+import 'notAvailable_screen.dart';
 
-import '../getxController.dart/printer_Test.dart';
+final int connect = 300;
+final connectNetwork _connectNetwork = Get.put(connectNetwork(connect));
 
 class LoadData extends StatelessWidget {
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
-
+  String HeadTextError = "ขออภัยในความไม่สะดวก";
+  String TextError = "ตู้ของท่านยังไม่ได้รับการลงทะเบียน";
   List<dynamic> menu = [];
   final dataKios _dataKios = Get.put(dataKios());
   final pinter_test printer_Test = Get.put(pinter_test());
@@ -93,11 +96,11 @@ class LoadData extends StatelessWidget {
       _dataKios.reqKiosdata.add(jsonResponse);
       print(
           'SerialNumbers : ${_dataKios.reqKiosdata[0]['kiosks']['customerId']}');
-     
+
       return reqKiosdata(kiosksId: kiosksId, customerId: customerId);
     } else {
-      print(response.reasonPhrase);
-      throw Exception('เกิดข้อผิดพลาดในการร้องขอ Kios');
+      return Get.to(NotAvailable(HeadTextError, TextError));
+      // throw Exception('เกิดข้อผิดพลาดในการร้องขอ Kios');
     }
   }
 
@@ -478,10 +481,14 @@ class LoadData extends StatelessWidget {
 
   @override
   Widget build(BuildContext ConText) {
-    loadDataAPI(ConText);
+    _connectNetwork.checkInternetConnection();
+    _connectNetwork.startTimer(ConText);
+    if (_connectNetwork.isConnected.value = true) {
+      loadDataAPI();
+    }
     final sizeHeight = MediaQuery.of(ConText).size.height;
     final sizeWidth = MediaQuery.of(ConText).size.width;
-    // print('${_dataKios.notcon.value}');
+
     return Scaffold(
       body: Container(
         height: sizeHeight * 1,
@@ -498,18 +505,10 @@ class LoadData extends StatelessWidget {
                   child: Lottie.asset('assets/loading.json'),
                 ),
               ),
-              Text(
-                'Please Wait A Moment',
-                style: GoogleFonts.kanit(
-                  fontSize: sizeWidth * 0.07,
-                ),
-              ),
-              Text(
-                'Checking The Food List',
-                style: GoogleFonts.kanit(
-                  fontSize: sizeWidth * 0.05,
-                ),
-              )
+              Text('กรุณารอสักครู่...',
+                  style: Fonts(ConText, 0.07, false, Colors.black)),
+              Text('กำลังตรวจสอบรายการอาหาร',
+                  style: Fonts(ConText, 0.05, false, Colors.black))
             ],
           ),
         ),
@@ -523,79 +522,17 @@ class LoadData extends StatelessWidget {
     printer_Test.devices.value.assignAll(results);
   }
 
-  Future<void> LAN_IP() async {
-    for (var interface in await NetworkInterface.list()) {
-      for (var addr in interface.addresses) {
-        if (addr.type == InternetAddressType.IPv4) {
-          // Store the IPv4 address in the list
-          printer_Test.ipAddresses.value.add({'ipAddress': addr.address});
-        }
-      }
-    }
-  }
-
-  /*  Future<void> PaymentSocket() async {
-    final String URL = 'http://192.168.0.9:15672';
-    final String host = '192.168.0.9'; // RabbitMQ Management Plugin URL
-    final String username = 'adminht';
-    final String password = '@minht9953293';
-    final String exchanges = 'statusPayment';
-    final String queues = 'KiosksPayment';
-    final String rout_key = '3MF2209002140212';
-    ConnectionSettings settings = ConnectionSettings(
-        host: host, authProvider: PlainAuthenticator(username, password));
-    Client client = Client(settings: settings);
-
-    Channel channel = await client.channel();
-    Queue queue = await channel.queue(
-      queues,
-      durable: true,
-      exclusive: false,
-      autoDelete: false,
-      arguments: null,
-    );
-
-    Exchange Exchanges = await channel.exchange(
-      exchanges,
-      ExchangeType.DIRECT,
-    );
-    await queue.bind(Exchanges, rout_key);
-
-    Consumer consumer = await queue.consume();
-    // ใช้ listen() เพื่อรับข้อมูลจาก Queue
-    consumer.listen((AmqpMessage message) {
-      print('Received message: ${message.payloadAsString}');
-    });
-  }*/
-
-  void loadDataAPI(BuildContext context) async {
-    final int connect = 300;
-    final connectNetwork _connectNetwork = Get.put(connectNetwork(connect));
+  void loadDataAPI() async {
     await initPlatformState();
     await reqKios();
-    _connectNetwork.startTimer(context);
-    await GetMenu();
-    await GetAdvert();
-    await GetPayment();
-    await USB_VID_PID();
-    await LAN_IP();
-    // await PaymentSocket();
-    /* print('IP :${_dataKios.ipAddresses}');
-    print(' devices : ${_dataKios.devices}');
-    print('Kios : ${_dataKios.reqKiosdata[0]['kiosks']['kiosksId']}');
-    print('CustomerId : ${_dataKios.reqKiosdata[0]['kiosks']['customerId']}');*/
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async {
-              return false;
-            },
-            child: Ads_screen(),
-          );
-        },
-      ),
-    );
+    if (_dataKios.reqKiosdata.isNotEmpty) {
+      await GetMenu();
+      await GetAdvert();
+      await GetPayment();
+      await USB_VID_PID();
+      if (printer_Test.devices.value.isNotEmpty) {
+        Get.to(Ads_screen());
+      }
+    }
   }
 }

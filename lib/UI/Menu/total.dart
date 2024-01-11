@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../alert/backhome.dart';
 import '../../api/Kios_API.dart';
 import '../../getxController.dart/amount_food.dart';
 import '../../getxController.dart/save_menu.dart';
 import '../../screen/selection_screen.dart';
+import '../../screen/setting_screen.dart';
 import '../../timeControl/adtime.dart';
 import '../../widget_sheet/myorder.dart';
 import '../../widget_sheet/payment_option.dart';
@@ -52,26 +51,7 @@ class totalUI extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    LogFile(Back);
-                    _foodOptionController.tapCount.value = 0;
-                    adtimeController.reset();
-                    Get.delete<amount_food>();
-                    Get.delete<FoodOptionController>();
-                    Get.delete<FoodItem>();
-
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return WillPopScope(
-                            onWillPop: () async {
-                              return false;
-                            },
-                            child: selection_screen(),
-                          );
-                        },
-                      ),
-                    );
+                    backHome(context);
                   },
                   child: Transform.translate(
                     offset: Offset(30.0, -20.0),
@@ -227,7 +207,7 @@ class totalUI extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: Text(
-                        'Payment',
+                        'ชำระเงิน',
                         style: TextStyle(
                           fontSize: sizeWidth * 0.047,
                           fontFamily: 'SukhumvitSet-Medium',

@@ -9,6 +9,7 @@ import '../getxController.dart/save_menu.dart';
 import '../restaurant/image.dart';
 import '../timeControl/adtime.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class logo_screen extends StatelessWidget {
   @override
@@ -26,7 +27,9 @@ class logo_screen extends StatelessWidget {
         'Select a dining location : ${_foodOptionController.formattedDate}';
 
     return Scaffold(
-      body: Column(
+        body: SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
         children: [
           Container(
               height: sizeHeight * 0.045,
@@ -36,10 +39,10 @@ class logo_screen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(sizeWidth * 0.01),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withOpacity(0.3),
                     spreadRadius: 2,
                     blurRadius: 4,
-                    offset: Offset(2, 2),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -124,7 +127,7 @@ class logo_screen extends StatelessWidget {
 
                         ///แตะเพื่อเริ่ม
                         child: Text(
-                          'แตะเพื่อเริ่มต้น',
+                          AppLocalizations.of(context).start,
                           style: TextStyle(
                             fontSize: sizeWidth * 0.047,
                             fontFamily: 'SukhumvitSet-Medium',
@@ -147,6 +150,6 @@ class logo_screen extends StatelessWidget {
           )
         ],
       ),
-    );
+    ));
   }
 }

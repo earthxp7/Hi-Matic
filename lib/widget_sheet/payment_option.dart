@@ -7,6 +7,7 @@ import 'package:screen/UI/Font/ColorSet.dart';
 import 'package:screen/getxController.dart/amount_food.dart';
 import 'package:screen/timeControl/waiting_for_payment.dart';
 import 'package:screen/widget_sheet/payment_scan.dart';
+import '../UI/Menu/total_in_widget.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
@@ -101,32 +102,6 @@ class BottomSheetContent extends StatelessWidget {
         print('Error: $error');
       }
     }
-
-    /* void PaymentSocket() {
-      client = StompClient(
-        config: StompConfig(
-          url:
-              'http://192.168.0.9:15672/', // แก้ไข URL ของ RabbitMQ ตามที่ต้องการ
-          onConnect: (StompFrame frame) {
-            print('Connected');
-            client.subscribe(
-              destination:
-                  '#/queues/%2F/KiosksPayment', // แก้ไขตาม Queue ที่ต้องการ subscribe
-              callback: (StompFrame frame) {
-                print('Received: ${frame.body}');
-                // ทำสิ่งที่ต้องการเมื่อได้รับข้อความจาก RabbitMQ ที่ subscribe
-              },
-            );
-          },
-          stompConnectHeaders: {
-            'login': 'adminht',
-            'passcode': '@minht9953293',
-          },
-        ),
-      );
-
-      client.activate();
-    }*/
 
     Future<void> postStatusPayment() async {
       String Paymentid = _dataKios.paymentdata[0].paymentId;
@@ -238,17 +213,17 @@ class BottomSheetContent extends StatelessWidget {
                         /*   imageAssets
                             .length */
                         _dataKios.paymentdata[0].channelLength, (index) {
+                      int IndexOrder = index;
+                      final cenel =
+                          _dataKios.paymentdata[0].optionData[IndexOrder];
+                      final cenalname = cenel['name'];
+                      final cenalrate = cenel['rate'];
+                      _foodOptionController.paymentsName.value = cenalname;
+
+                      String Payment =
+                          'Payment by : ${_foodOptionController.paymentsName.value} ${_foodOptionController.formattedDate}';
                       return GestureDetector(
                         onTap: () async {
-                          int IndexOrder = index;
-                          final cenel =
-                              _dataKios.paymentdata[0].optionData[IndexOrder];
-                          final cenalname = cenel['name'];
-                          final cenalrate = cenel['rate'];
-                          _foodOptionController.paymentsName.value = cenalname;
-
-                          String Payment =
-                              'Payment by : ${_foodOptionController.paymentsName.value} ${_foodOptionController.formattedDate}';
                           if (_foodOptionController.total_price.value > 0 &&
                               _foodOptionController.payment_times.value == 0) {
                             _foodOptionController.payment_times.value = 5;
@@ -290,21 +265,30 @@ class BottomSheetContent extends StatelessWidget {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  title: Text('No Food Items Found',
+                                  title: Text('ไม่พบรายการอาหาร',
                                       style: Fonts(
                                           context, 0.042, true, Colors.red)),
                                   content: Text(
-                                      'Please Select Your Meal Before Paying',
+                                      'โปรดเลือกอาหารของคุณก่อนชำระเงิน',
                                       style: Fonts(
-                                          context, 0.028, true, Colors.white)),
+                                          context, 0.028, false, Colors.black)),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       },
-                                      child: Text('OK',
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.blue,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 12, horizontal: 24),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: Text('ตกลง',
                                           style: Fonts(context, 0.034, true,
-                                              Colors.blue)),
+                                              Colors.white)),
                                     ),
                                   ],
                                 );
@@ -313,14 +297,15 @@ class BottomSheetContent extends StatelessWidget {
                           }
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 10),
-                          child: Image.asset(
-                            imageAssets[index],
-                            fit: BoxFit.contain,
-                            height: sizeHeight * 0.11,
-                            width: sizeWidth * 0.41,
-                          ),
-                        ),
+                            padding: const EdgeInsets.only(left: 10),
+                            child: (cenalrate > 0.0)
+                                ? Image.asset(
+                                    imageAssets[index],
+                                    fit: BoxFit.contain,
+                                    height: sizeHeight * 0.11,
+                                    width: sizeWidth * 0.41,
+                                  )
+                                : Container()),
                       );
                     }),
                   ),
@@ -335,16 +320,9 @@ class BottomSheetContent extends StatelessWidget {
                     width: sizeWidth * 1,
                     color: Color.fromARGB(255, 225, 224, 223),
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 50),
+                      padding: const EdgeInsets.only(top: 20),
                       child: Column(
-                        children: [
-                          Obx(
-                            () => Text(
-                                'Total Payment       ${_foodOptionController.total_price.value} ฿',
-                                style:
-                                    Fonts(context, 0.045, true, Colors.black)),
-                          )
-                        ],
+                        children: [TotalWiget()],
                       ),
                     ),
                   ),

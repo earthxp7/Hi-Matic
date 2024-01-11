@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:screen/getxController.dart/amount_food.dart';
 import 'package:screen/getxController.dart/textbox_controller.dart';
 import '../UI/Font/ColorSet.dart';
+import '../UI/Menu/total_in_widget.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
@@ -57,7 +58,7 @@ class MyOrder extends StatelessWidget {
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(
-                                  left: 340, right: 130, top: 50),
+                                  left: 340, right: 130, top: 80),
                               child: Text("รายการอาหารของฉัน",
                                   style: Fonts(
                                       context, 0.045, true, Colors.black)),
@@ -97,7 +98,7 @@ class MyOrder extends StatelessWidget {
                               color: Colors.white,
                               height: sizeHeight * 0.4895,
                               child: Center(
-                                child: Text('No Food Items Found',
+                                child: Text('โปรดเลือกอาหารที่ท่านต้องการ',
                                     style: Fonts(context, 0.045, true,
                                         Color.fromARGB(255, 131, 129, 129))),
                               ),
@@ -317,12 +318,12 @@ class MyOrder extends StatelessWidget {
                                                                               .length <=
                                                                           35
                                                                       ? mealDescriptionEN
-                                                                      : '${mealDescriptionEN.substring(0, 80)}...'
+                                                                      : '${mealDescriptionEN.substring(0, 70)}...'
                                                                   : mealDescriptionTH
                                                                               .length <=
                                                                           35
                                                                       ? mealDescriptionTH
-                                                                      : '${mealDescriptionTH.substring(0, 80)}...',
+                                                                      : '${mealDescriptionTH.substring(0, 70)}...',
                                                               style: Fonts(
                                                                   context,
                                                                   0.024,
@@ -640,30 +641,16 @@ class MyOrder extends StatelessWidget {
                       child: Row(
                         children: [
                           Container(
-                            height: sizeHeight * 0.2,
-                            width: sizeWidth * 1,
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 200, 194, 194),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0), // ซ้ายบน
-                                topRight: Radius.circular(20.0), // ขวาบน
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Obx(
-                                  () => Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 250, top: 30),
-                                    child: Text(
-                                        'Total Payment           ${_foodOptionController.total_price.value} ฿',
-                                        style: Fonts(context, 0.045, true,
-                                            Colors.black)),
-                                  ),
+                              height: sizeHeight * 0.2,
+                              width: sizeWidth * 1,
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 200, 194, 194),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0), // ซ้ายบน
+                                  topRight: Radius.circular(20.0), // ขวาบน
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
+                              child: TotalWiget()),
                         ],
                       ),
                     )

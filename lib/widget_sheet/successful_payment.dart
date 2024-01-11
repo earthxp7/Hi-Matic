@@ -4,10 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:screen/timeControl/waiting%20_for_success.dart';
 import 'package:screen/widget_sheet/food_option.dart';
+import '../UI/Font/ColorSet.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_getx.dart';
+import '../printer/printer_USB.dart';
 import '../screen/selection_screen.dart';
 import '../timeControl/adtime.dart';
 import 'myorder.dart';
@@ -57,35 +58,16 @@ class successful_payment extends StatelessWidget {
             padding: const EdgeInsets.only(top: 100),
             child: Column(
               children: [
-                Text(
-                  'Order Food And Make A Payment.',
-                  style: GoogleFonts.kanit(
-                    fontSize: sizeWidth * 0.045,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Completed !',
-                  style: GoogleFonts.kanit(
-                    fontSize: sizeWidth * 0.045,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'Payment Successful!',
-                  style: GoogleFonts.kanit(
-                    fontSize: sizeWidth * 0.032,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text('สั่งอาหารและชำเงิน',
+                    style: Fonts(context, 0.045, true, Colors.black)),
+                Text('เสร็จสมบูรณ์ !',
+                    style: Fonts(context, 0.045, true, Colors.black)),
+                Text('Payment Successful!',
+                    style: Fonts(context, 0.032, true, Colors.black)),
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    formattedDate,
-                    style: GoogleFonts.kanit(
-                      fontSize: sizeWidth * 0.032,
-                    ),
-                  ),
+                  child: Text(formattedDate,
+                      style: Fonts(context, 0.032, false, Colors.black)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 50, bottom: 40),
@@ -94,12 +76,8 @@ class successful_payment extends StatelessWidget {
                     width: sizeWidth * 0.35,
                   ),
                 ),
-                Text(
-                  'Please Wait For Your Receipt',
-                  style: GoogleFonts.kanit(
-                    fontSize: sizeWidth * 0.032,
-                  ),
-                ),
+                Text('กรุณารอรับใบเสร็จ',
+                    style: Fonts(context, 0.032, false, Colors.black)),
                 GestureDetector(
                   onTap: () async {
                     String returns =
@@ -131,9 +109,9 @@ class successful_payment extends StatelessWidget {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 291),
+                    padding: const EdgeInsets.only(top: 293),
                     child: Container(
-                      height: sizeHeight * 0.09,
+                      height: sizeHeight * 0.08,
                       width: sizeWidth * 1,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -154,24 +132,19 @@ class successful_payment extends StatelessWidget {
                             ),
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(top: 20, bottom: 10),
-                              child: Text(
-                                'Return To The Main Page',
-                                style: GoogleFonts.kanit(
-                                  fontSize: sizeWidth * 0.032,
-                                ),
-                              ),
+                                  const EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text('กลับสู่หน้าหลัก',
+                                  style: Fonts(
+                                      context, 0.032, false, Colors.black)),
                             ),
                           ),
                           Obx(() {
                             final success_controller =
                                 Get.find<waiting_for_success>();
                             return Text(
-                              '(${formatTimes(success_controller.remainingSeconds.value)})',
-                              style: GoogleFonts.kanit(
-                                fontSize: sizeWidth * 0.032,
-                              ),
-                            );
+                                '(${formatTimes(success_controller.remainingSeconds.value)})',
+                                style:
+                                    Fonts(context, 0.032, false, Colors.black));
                           }),
                         ],
                       ),

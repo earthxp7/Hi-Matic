@@ -7,8 +7,7 @@ class pinter_test extends GetxController {
   RxString selectedRadio = ''.obs;
   final List<String> FixPrint = ['USB', 'LAN'];
   var selectedDropdownValues = <String, Map<String, dynamic>>{}.obs;
-
-  var ipAddresses = RxList<Map<String, dynamic>>().obs;
+  RxString ipAddresses = ''.obs;
   var devices = RxList<Map<String, dynamic>>().obs;
   var dropdownItems = <DropdownMenuItem<Map<String, dynamic>>>[].obs;
   RxInt vid = 0.obs;
