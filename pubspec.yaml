@@ -111,7 +111,6 @@ flutter:
     - assets/loading.json
     - assets/fail_payment.json
     - assets/click.json
-    - assets/กรุณารับใบเสร็จ.gif
     - assets/loading.gif
     - assets/logoHI-TOP.jpg
     - assets/LinePay.png
