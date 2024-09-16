@@ -1,7 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:screen/getxController.dart/payment.dart';
+import 'package:screen/getxController.dart/selection.dart';
+import 'package:screen/widget_sheet/myorder.dart';
+import 'package:screen/widget_sheet/payment_option.dart';
+import 'package:screen/widget_sheet/payment_scan.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
@@ -10,21 +14,21 @@ import '../screen/selection_screen.dart';
 import '../widget_sheet/food_option.dart';
 import 'adtime.dart';
 
-import 'package:http/http.dart' as http;
-
 int admob_time = 30;
 
 class waiting_for_success extends GetxController {
-  final UsbDeviceController usbDeviceController =
-      Get.put(UsbDeviceController());
+  final FoodItem _Item = Get.put(FoodItem());
+  final dataKios _dataKios = Get.put(dataKios());
+  final UsbDeviceControllers usbDeviceController =
+      Get.put(UsbDeviceControllers());
+  final FoodItem resetfood = FoodItem();
   final int successful_time;
   RxInt remainingSeconds = 0.obs;
-  Timer timer;
-  final dataKios _dataKios = Get.put(dataKios());
+  Timer? timer;
   waiting_for_success(this.successful_time);
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
-  final admob_times = Get.put(AdMobTimeController(admob_time));
+  final admob_times = Get.put(AdMobTimeController(admob_time: admob_time));
 
   @override
   void onInit() {
@@ -40,47 +44,53 @@ class waiting_for_success extends GetxController {
   void startTimer(BuildContext context) {
     const oneSecond = Duration(seconds: 1);
     timer = Timer.periodic(oneSecond, (timer) {
-      if (remainingSeconds.value > 0) {
+      if (remainingSeconds.value > 1) {
         remainingSeconds.value--;
         print('susses ${remainingSeconds.value}');
-      } else if (remainingSeconds.value == 0) {
-        print('sussesEsle ${remainingSeconds.value}');
+      } else if (remainingSeconds.value == 1) {
         String returns =
             'Return to the Select a dining location page : ${_foodOptionController.formattedDate}';
         LogFile(returns);
-        timer?.cancel();
-        stopTimerAndReset();
         admob_times.startTimer(context);
+        stopTimerAndReset();
         Get.delete<amount_food>();
         Get.delete<FoodOptionController>();
-        Get.delete<UsbDeviceController>();
+        stopTimerAndReset();
+        Get.delete<MyOrder>();
+        Get.delete<UsbDeviceControllers>();
         Get.delete<FoodItem>();
+        Get.delete<amount_food>();
         Get.delete<food_option>();
-        FoodItem foodItem = null;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return WillPopScope(
-                onWillPop: () async {
-                  return false;
-                },
-                child: selection_screen(),
-              );
-            },
-          ),
-        );
+        Get.delete<Payment_controller>();
+        Get.delete<SelectionController>();
+        _dataKios.status.value = '';
+        if (_Item.selectedlevel == '') {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) {
+                return WillPopScope(
+                  onWillPop: () async {
+                    // Return false to prevent the user from navigating back
+                    return false;
+                  },
+                  child: selection_screen(),
+                );
+              },
+            ),
+          );
+        }
       }
     });
-  }
 
-  void reset() {
-    remainingSeconds.value = successful_time;
-  }
+    void reset() {
+      remainingSeconds.value = successful_time;
+    }
 
-  @override
-  void onClose() {
-    timer?.cancel();
-    super.onClose();
+    @override
+    void onClose() {
+      timer?.cancel();
+      super.onClose();
+    }
   }
 }

@@ -14,9 +14,8 @@ class NotAvailable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final int connect = 300;
-    final connectnetwork = Get.put(connectNetwork(connect));
+    final connectnetwork = Get.put(connectNetwork(connect: connect));
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
     connectnetwork.Internet.value = true;

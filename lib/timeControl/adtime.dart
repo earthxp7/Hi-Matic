@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:screen/getxController.dart/selection.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/amount_food.dart';
 import '../getxController.dart/save_menu.dart';
@@ -13,11 +14,10 @@ import '../widget_sheet/myorder.dart';
 class AdMobTimeController extends GetxController {
   final int admob_time;
   RxInt remainingSeconds = 0.obs;
-  Timer timer;
+  Timer? timer;
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
-  AdMobTimeController(this.admob_time);
-
+  AdMobTimeController({required this.admob_time});
   @override
   void onInit() {
     super.onInit();
@@ -28,8 +28,6 @@ class AdMobTimeController extends GetxController {
     timer?.cancel();
     remainingSeconds.value = admob_time;
   }
-
-// Assume that you have a variable `remainingSeconds` and `successful_time` defined somewhere.
 
   void startTimer(BuildContext context) {
     const oneSecond = Duration(seconds: 1);
@@ -42,33 +40,36 @@ class AdMobTimeController extends GetxController {
         String Timeout =
             'Timeout(Advert): ${_foodOptionController.formattedDate}';
         LogFile(Timeout);
-        timer?.cancel();
+        timer.cancel();
 
         remainingSeconds.value = admob_time;
         stopTimerAndReset();
-        Get.delete<FoodOptionController>();
+      Get.delete<FoodOptionController>();
         Get.delete<MyOrder>();
-        Get.delete<UsbDeviceController>();
+        Get.delete<UsbDeviceControllers>();
         Get.delete<FoodItem>();
         Get.delete<amount_food>();
         Get.delete<food_option>();
         Get.delete<fail_pay_screen>();
-        Navigator.push(
+        Get.to( Ads_screen());
+        Get.delete<SelectionController>();
+    /*  Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) {
               return WillPopScope(
                   onWillPop: () async {
-                    // Return false to prevent the user from navigating back
                     return false;
                   },
                   child: Ads_screen());
             },
           ),
-        );
+        );*/
       }
     });
   }
+ 
+
 
   void reset() {
     remainingSeconds.value = admob_time;

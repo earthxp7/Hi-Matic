@@ -1,6 +1,6 @@
 class NameRes {
   final String nameRes;
-  const NameRes({this.nameRes});
+  const NameRes({required this.nameRes});
 }
 
 List<NameRes> nameRestaurant = [
@@ -9,7 +9,7 @@ List<NameRes> nameRestaurant = [
 
 class IDKiosk {
   final String kiosk;
-  const IDKiosk({this.kiosk});
+  const IDKiosk({required this.kiosk});
 }
 
 List<IDKiosk> idkoisk = [

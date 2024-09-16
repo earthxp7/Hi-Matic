@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:intl/intl.dart';
 
 import '../api/Kios_API.dart';
@@ -20,7 +21,8 @@ class FoodOptionController extends GetxController {
   final selectedlevel = <String>[].obs;
   Map<int, List<int>> indexToListMap = {};
   RxString printerValue = ''.obs;
-  Timer timer;
+  late Timer timer;
+  Rx<Image?> images = Rx<Image?>(null);
   List<FoodItem> foodItemsForIndex = [];
   final List<bool> selectedSpecial = <bool>[].obs;
   final List<bool> selectedSpecialCat1 = <bool>[].obs;
@@ -63,10 +65,11 @@ class FoodOptionController extends GetxController {
   //var c = 0.obs;
   RxInt payment_times = 0.obs;
   var tapCount = 0.obs;
+  var tapIndex = 0.obs;
   String total = '';
   RxString choose = ''.obs;
   RxString cancel = ''.obs;
-  RxString paymentsName = ''.obs;
+ 
   var alltotal = 0.obs;
   RxDouble total_price = 0.0.obs;
   RxInt numorder = 0.obs;
@@ -87,7 +90,7 @@ class FoodOptionController extends GetxController {
   var removeCount = 0.obs;
   var pushTotal = 0.obs;
   var removeTotal = 0.obs;
-  var namecat = 'Coffee'.obs;
+  var namecat = ''.obs;
   String formattedDate = DateFormat('HH:mm:ss').format(DateTime.now());
   /* var cancelpush = 0.obs;
   var cancelremove = 0.obs;*/
@@ -244,7 +247,7 @@ class FoodOptionController extends GetxController {
     timer = Timer.periodic(oneSecond, (timer) {
       if (payment_times.value > 0) {
         payment_times.value--;
-        print(' ${payment_times.value}');
+        print('จ่ายได้ในอีก : ${payment_times.value}');
       } else if (payment_times.value == 0) {
         timer.cancel;
       }
@@ -631,21 +634,21 @@ class FoodOptionController extends GetxController {
     if (!checkorders.contains(mealNameID)) {
       categoryValues.add(cat);
       orders.add(index);
-      double calculatedTotal = calculateTotal(index, cat);
+      double calculatedTotal = calculateTotal(index, cat).toDouble();
       calculatedTotalMap[index.toDouble()] = calculatedTotal;
       print('ค่าเก่า ${calculatedTotal}');
       int amount_food = countValue(index, cat);
       pushorsad(index, cat);
       amountFoodMap[index] = amount_food;
       print('จำนวนอาหารเก่า : ${amount_food}');
-      //numorder += amount_food; // ค่า numorder เพิ่มเพียงครั้งเดียว
-      total_price += calculatedTotal;
+
+      total_price.value += calculatedTotal.toDouble();
       numorder += amount_food;
     } else {
       print('เข้าElse');
-      int oldAmount = amountFoodMap[index];
+      int oldAmount = amountFoodMap[index]!.toInt();
       print('จำนวนอาหารเก่า ${oldAmount}');
-      double oldCalculatedTotal = calculatedTotalMap[index];
+      double oldCalculatedTotal = calculatedTotalMap[index]!.toDouble();
       print('จำนวนอาหารรวม ${numorder}');
       print('ค่าเก่า ${oldCalculatedTotal}');
       int new_amountFood = countValue(index, cat);
@@ -654,7 +657,7 @@ class FoodOptionController extends GetxController {
       print('จำนวนอาหารเก่าOld${oldAmount}');
       print('ค่าต่างจำนวนอาหารKK${diff_amount}');
       print('จำนวนอาหารปัจจุบันNew ${new_amountFood}');
-      double recalculatedTotal = calculateTotal(index, cat);
+      double recalculatedTotal = calculateTotal(index, cat).toDouble();
       calculatedTotalMap[index.toDouble()] = recalculatedTotal;
       print('ค่าปัจจุบน ${recalculatedTotal}');
       double diff = recalculatedTotal - oldCalculatedTotal;
@@ -725,7 +728,7 @@ class FoodOptionController extends GetxController {
     final mealPrice = meal.mealPrice;
     final mealOptionprice = meal.mealOptionprice;
 
-    double total = counts[index] *
+    double total = counts[index].toDouble() *
         (mealPrice +
             foodItem.price +
             foodItem.egg1 +
@@ -737,20 +740,7 @@ class FoodOptionController extends GetxController {
     return total;
   }
 
-  num calculateTotalWithVAT() {
-    final totalBeforeVAT = total_price.value;
-    final vatRate = 0.07; // 7% VAT
-    final vatAmount = totalBeforeVAT * vatRate;
-
-    return double.parse(vatAmount.toStringAsFixed(0));
-  }
-
-  num NetPrice() {
-    final totalBeforeVAT = total_price.value;
-    final VatRate = calculateTotalWithVAT();
-    final Vat7 = totalBeforeVAT + VatRate;
-    return Vat7;
-  }
+ 
 
   String Textmore(int index, String cat, String text) {
     final selectedFoodItem = (cat == 'Steak')
@@ -803,30 +793,28 @@ class FoodItem {
   String selectedValue;
   String enteredText;
   String selectedlevel;
-  int textValue;
 
   FoodItem(
-      {this.foodName,
-      this.spicinessLevel,
-      this.isEggDawMaiSook,
-      this.isEggDawSook,
-      this.isKaiJeaw,
-      this.additionalDetails,
-      this.count,
+      {this.foodName = '',
+      this.spicinessLevel = '',
+      this.isEggDawMaiSook = false,
+      this.isEggDawSook = false,
+      this.isKaiJeaw = false,
+      this.additionalDetails = '',
+      this.count = 0,
       this.price = 0,
       this.level = 0,
       this.special = 0,
-      this.selectedOption,
-      this.selected_Spiciness,
+      this.selectedOption = '',
+      this.selected_Spiciness = '',
       this.egg = 0,
       this.egg1 = 0,
       this.egg2 = 0,
       this.egg3 = 0,
-      this.selectedValue,
-      this.enteredText,
-      this.textValue,
-      this.Kai1,
-      this.Kai2,
-      this.Kai3,
-      this.selectedlevel});
+      this.selectedValue = '',
+      this.enteredText = '',
+      this.Kai1 = '',
+      this.Kai2 = '',
+      this.Kai3 = '',
+      this.selectedlevel = ''});
 }

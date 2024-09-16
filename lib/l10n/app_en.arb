@@ -6,7 +6,7 @@
     "start": "Tap To Start",
     "@start": {"description": "Tap To Start"},
 
-    "touch": "Tap To Start Shopping",
+    "touch": "Tap to start ordering food",
     "@touch": {"description": "Start the app"},
  
     "topic": "Order Process",
@@ -16,11 +16,13 @@
     "@process1": {"description": "Select Items for Cart"},
     "process2": "Choose Payment Method",
     "@process2": {"description": "Choose payment method"},
-    "process3": "Make Payment",
+    "process3": "Payment",
     "@process3": {"description": "Make payment"},
     "process4": "Awaiting Delivery And Change",
     "@process4": {"description": "Awaiting Delivery and Change"},
-
+    "choose": "Choose Dine-In or Take Away",
+    "dineIn": "Dine-In",
+    "takeAway":"Take Away",
     "category": "Category {index}",
     "@category": {"description": "Category",
     "placeholders":{
@@ -29,6 +31,9 @@
         }
     }
 },
+    "note":"Note",
+    "add_order": "Add To List",
+    "ex":"eg.. No Vegetable",
     "total": "Total Payment",
     "@total":{"description": "texttotal"},
 
@@ -67,6 +72,8 @@
     "@rabbi" :{"description": "Rabbit Line Pay text"},
     "ali_Pay":"Ali Pay",
     "@ali_Pay" :{"description": "Ali Pay text"},
+    "total_payment":"Payment Total",
+
 
     "wait":"Wait A Moment..",
     "@wait" :{"description": "Wait A Moment text"},
@@ -101,6 +108,62 @@
     "thank_you":"Thank You For Using The Service",
     "@thank_you" :{"description": "thank_you text"},
     "unsuccessful":"Unsuccessful Payment",
-    "@unsuccessful" :{"description": "unsuccessful text"}
+    "@unsuccessful" :{"description": "unsuccessful text"},
 
+    "important_details": "Please select complete food details",
+    "@important_details": {"description": "unsuccessful text"},
+    "check_food_list": "Check your food information (e.g. Meat, Spiciness level)",
+    "@check_food_list": {"description": "Check the food list"},
+    "food_prices": "Food prices",
+    "@food_prices": {"description": "Food prices"},
+    "head_cancel_payment":"Cancel payment?",
+    "@head_cancel_payment": {"description": "Confirm payment cancellation order"},
+    "detail_cancel_payment":"Do you want to cancel your payment?",
+    "@detail_cancel_payment": {"description": "Details of confirmation of payment cancellation order"},
+    "agree":"Confirm",
+    "@agree": {"description": "Confirm"},
+    "cancel":"Cancel",
+    "@cancel": {"description": "Cancel"},
+    "head_return_home_page":"Return to the main page?",
+    "@head_return_home_page": {"description": "Return to the main page?"},
+    "detail_return_home_page":"The food item you selected will be deleted",
+    "@detail_return_home_page": {"description": "Confirm return to home page"},
+   
+    "head_no_food":"No food items found",
+    "@detail_no_food": {"description": "Header No food items found"},
+    "detail_no_food":"Please select your meal before paying",
+    "@detail_no_food": {"description": "Detail No food items found"},
+    "please_choose_food":"Please choose the food you want",
+    "@please_choose_food": {"description": "Please choose the food you want"},
+    "setting_page":"Settings",
+    "@setting_page": {"description": "Headder Settings Screen"},
+    "confirm_close_app":"Close The Application?",
+    "@confirm_close_app": {"description":"Confirm closing the app"},
+    "confirm_open_network_system":"Open Network System Page?",
+    "@confirm_open_network_system": {"description":"Header Confirm Open Network System Page?"},
+    "confirm_open_android_system":"Open Android System Page?",
+    "@confirm_open_android_system": {"description":"Header Confirm Open Android System Page?"},
+    "confirm_return_menu_page":"Return To Menu Page?",
+    "@confirm_return_menu_page": {"description": "Header Confirm Return To Menu Page?"},
+    "print_test":"Print Test",
+    "@print_test": {"description":"Header Print Test"},
+    "save_data":"Save And Apply",
+    "@save_data": {"description":"Header Save And Apply"},
+    "return_menu_page":"Return To Menu Page",
+    "@return_menu_page": {"description":"Header Return To Menu Page?"},
+    "confirm_identity":"Please Confirm Your Identity",
+    "@confirm_identity": {"description":"Header Confirm Identity"},
+    "enter_password":"Enter Your Password",
+    "@confirm_identity": {"description":"Enter your password"},
+    "failed_identity":"Failed to verify identity",
+    "@failed_identity": {"description":"Failed to verify identity"},
+    "input_ip":"  Enter Your IP",
+    "@input_ip": {"description":"Enter Your IP"},
+    "no_payment_method":"No payment method found",
+    "@no_payment_method": {"description":"No payment method found"},
+    "detail_no_payment_method":"Please select a payment method that is ready to be processed",
+    "@detail_no_payment_method": {"description":"Please select a payment method that is ready to be processed"}
 }
+
+
+

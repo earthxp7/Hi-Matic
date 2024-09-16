@@ -7,19 +7,18 @@ import '../timeControl/adtime.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class languageBar extends StatelessWidget {
+    final dataKios _dataKios = Get.put(dataKios());
+    final FoodOptionController _foodOptionController =
+    Get.put(FoodOptionController());
   @override
   Widget build(BuildContext context) {
     final int admob_time = 60;
     final AdMobTimeController adtimeController =
-        Get.put(AdMobTimeController(admob_time));
-    final FoodOptionController _foodOptionController =
-        Get.put(FoodOptionController());
+        Get.put(AdMobTimeController(admob_time: admob_time));
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
-    final dataKios _dataKios = Get.put(dataKios());
     final DateLog = _foodOptionController.formattedDate;
     String SettingPage = 'Enter the settings panel : ${DateLog}';
-
     List Language = [
       'assets/Language/Thai.png',
       'assets/Language/English.png',
@@ -28,51 +27,40 @@ class languageBar extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
+          SizedBox(
+            width: sizeWidth *0.015,
+          ),
           GestureDetector(
             onTap: (() {
               if (_foodOptionController.tapCount < 9) {
                 _foodOptionController.tapCount++;
               } else {
-                LogFile(SettingPage);
-                _foodOptionController.tapCount.value = 0;
-                adtimeController.stopTimerAndReset();
                 showLoginDialog(context);
+                LogFile(SettingPage);
+                adtimeController.stopTimerAndReset();
+                _foodOptionController.tapCount.value = 0;
               }
             }),
             child: Container(
-                width: sizeWidth * 0.2,
-                height: sizeHeight * 0.6,
-                child: Image.asset("assets/Logo_HI-TOP.png")),
+                width: sizeWidth * 0.11,
+                height: sizeHeight * 0.55,
+                color: Colors.white,
+                child: Image.asset("assets/Logo_HI-TOP.png",
+                 scale: 0.5,)),
+                
           ),
           SizedBox(
-            width: sizeWidth * 0.42,
+            width: sizeWidth * 0.71,
           ),
-          Container(
-            height: sizeHeight * 1,
-            width: sizeWidth * 0.2,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                AppLocalizations.of(context).language,
-                style: TextStyle(
-                  fontSize: sizeWidth * 0.026,
-                  fontFamily: 'SukhumvitSet-Medium',
-                ),
-              ),
-            ),
-          ),
-          SizedBox(
-            width: sizeWidth * 0.01,
-          ),
+        
           Wrap(
-              spacing: 10,
+              spacing: sizeWidth * 0.0075,
               runSpacing: 40,
               alignment: WrapAlignment.start,
               crossAxisAlignment: WrapCrossAlignment.start,
               children: List.generate(Language.length, (index) {
                 return GestureDetector(
                     onTap: () async {
-                      print('language : ${_dataKios.language.value}');
                       _dataKios.languageValue.value = index;
                       if (_dataKios.languageValue.value == 0) {
                         _dataKios.language.value = 'th';

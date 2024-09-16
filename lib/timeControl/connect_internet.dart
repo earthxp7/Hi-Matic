@@ -22,14 +22,14 @@ class connectNetwork extends GetxController {
   RxInt remainingSeconds = 0.obs;
   RxBool isConnected = false.obs;
   RxInt k = 0.obs;
-  Timer timer;
+  Timer? timer;
   String HeadTextError = "ขออภัยในความไม่สะดวก";
   String TextError = "โปรดตรวจสอบสัญญาณอินเตอร์เน็ตของท่าน";
   final notConnect = NotAvailable;
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
 
-  connectNetwork(this.connect);
+  connectNetwork({required this.connect});
   @override
   void onInit() {
     super.onInit();
@@ -46,14 +46,15 @@ class connectNetwork extends GetxController {
       http.Client client = http.Client();
       final response = await http.get(Uri.parse('https://www.google.com'));
       if (response.statusCode == 200) {
-        return true; // สามารถเชื่อมต่ออินเทอร์เน็ตได้
-
+        isConnected.value = true; // Connected to the internet
       } else {
-        return false; // ไม่สามารถเชื่อมต่ออินเทอร์เน็ตได้
+        isConnected.value = false; // Not connected to the internet
       }
     } catch (e) {
-      return false; // ไม่สามารถเชื่อมต่ออินเทอร์เน็ตได้
+      isConnected.value = false; // Not connected to the internet
     }
+
+    return isConnected.value; // Return the final boolean value
   }
 
   Future<reqKiosdata> reqKios() async {
@@ -73,11 +74,12 @@ class connectNetwork extends GetxController {
     if (response.statusCode == 200) {
       String responseBody = await response.stream.bytesToString();
       Map<String, dynamic> jsonResponse = json.decode(responseBody);
+      final access_token =  jsonResponse['data']['access_token '];
       final kiosksId = jsonResponse['kiosks']['kiosksId'];
       final customerId = jsonResponse['kiosks']['customerId'];
       _dataKios.reqKiosdata.add(jsonResponse);
 
-      return reqKiosdata(kiosksId: kiosksId, customerId: customerId);
+      return reqKiosdata(access_token : access_token,kiosksId: kiosksId, customerId: customerId);
     } else {
       print(response.reasonPhrase);
       throw Exception('เกิดข้อผิดพลาดในการร้องขอ Kios');
@@ -98,7 +100,7 @@ class connectNetwork extends GetxController {
           Network.value = 'Connected to the internet';
           Get.delete<FoodOptionController>();
           Get.delete<MyOrder>();
-          Get.delete<UsbDeviceController>();
+          Get.delete<UsbDeviceControllers>();
           Get.delete<FoodItem>();
           Get.delete<amount_food>();
           Get.delete<food_option>();
@@ -146,7 +148,7 @@ class connectNetwork extends GetxController {
   }
 
   void writeLog(BuildContext context) async {
-    await ConnectNewtwork(context);
+    ConnectNewtwork(context);
     String internet =
         'Check Internet ${Network.value} : ${_foodOptionController.formattedDate}';
     LogFile(internet);
@@ -154,14 +156,11 @@ class connectNetwork extends GetxController {
 
   void startTimer(BuildContext context) {
     k++;
-    print('ค่าา k : ${k.value}');
     const oneSecond = Duration(seconds: 1);
     timer = Timer.periodic(oneSecond, (timer) {
       if (remainingSeconds.value > 0) {
         remainingSeconds.value--;
-        print('เวลาเช็คเน็ต ${remainingSeconds.value}');
       } else if (remainingSeconds.value == 0) {
-        print('เช็คเน็ต');
         ConnectNewtwork(context);
         writeLog(context);
         reset();

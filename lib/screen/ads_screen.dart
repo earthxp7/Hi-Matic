@@ -5,50 +5,38 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:screen/Appbar/report.dart';
 import 'package:screen/screen/logo_screen.dart';
 import '../Appbar/language.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
-import '../printer/printer_USB.dart';
 import '../timeControl/adtime.dart';
 import 'package:video_player/video_player.dart';
-import 'package:flutter/services.dart';
 import '../timeControl/connect_internet.dart';
-
-class Ads_screen extends StatefulWidget {
-  final int index;
-  final String videoUrl;
-  Ads_screen({this.index, this.videoUrl});
-  @override
-  _HomeState createState() => _HomeState();
-}
 
 final Random random = Random();
 final dataKios _dataKios = Get.put(dataKios());
-final randomIndex = random.nextInt(_dataKios.advertlist.length);
-final int connect = 20;
-final int admob_time = 60;
 
-class _HomeState extends State<Ads_screen> {
+class Ads_screen extends StatelessWidget {
+  final FoodOptionController _foodOptionController =
+      Get.put(FoodOptionController());
+  final randomIndex = random.nextInt(_dataKios.advertlist.length);
+  final int connect = 20;
+  final int admob_time = 60;
   bool isEditing = false;
-  VideoPlayerController controller;
-  final UsbDeviceController usbDeviceController =
-      Get.put(UsbDeviceController());
-  final advert = _dataKios.advertlist[randomIndex];
-
+  late VideoPlayerController controller;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     _dataKios.status.value = '';
-    final connectnetwork = Get.put(connectNetwork(connect));
+    final connectnetwork = Get.put(connectNetwork(connect: connect));
     connectnetwork.Internet.value = false;
-    final FoodOptionController _foodOptionController =
-        Get.put(FoodOptionController());
+    //  print('Token ${ _dataKios.reqKiosdata[0]['kiosks']['access_token']}');
     String Log = 'Start Application : ${_foodOptionController.formattedDate}';
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
-    final admob_times = Get.put(AdMobTimeController(admob_time));
-
+    final admob_times = Get.put(AdMobTimeController(admob_time: admob_time));
+    final int index;
+    final String videoUrl;
     return Scaffold(
         body: SingleChildScrollView(
             physics: NeverScrollableScrollPhysics(),
@@ -58,203 +46,115 @@ class _HomeState extends State<Ads_screen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      height: sizeHeight * 0.045,
+                      height: sizeHeight * 0.042,
                       width: sizeWidth * 1,
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(255, 255, 255, 1),
-                        borderRadius: BorderRadius.circular(sizeWidth * 0.01),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 4,
-                            offset: Offset(2, 2),
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                      borderRadius: BorderRadius.circular(sizeWidth * 0.01),
+                      boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: languageBar()),
+Container(
+  height: sizeHeight * 0.937,
+  width: sizeWidth * 1,
+  color: Colors.white,
+  child: ListView.builder(
+    physics: NeverScrollableScrollPhysics(),
+    itemCount: 1,
+    itemBuilder: (BuildContext context, int index) {
+      final advert = _dataKios.advertlist[0];
+      final advertisingImages = advert.advertisingImage;
+      final advertisingImageType = advert.advertisingImageType;
+      final videoController = VideoPlayerController.file(File(advertisingImages));
+
+      return (advertisingImageType == "video")
+          ? FutureBuilder(
+              future: videoController.initialize(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  videoController.setLooping(false);
+                 // videoController.play();
+
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          videoController.dispose();
+                          LogFile(Log);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => logo_screen(),
+                            ),
+                          );
+                        },
+                        child: Transform.translate(
+                              offset: Offset(0.0, sizeHeight * -0.05),
+                              child:Container(
+                          height: sizeHeight * 1, // ใช้ขนาดที่เหมาะสม
+                          width: sizeWidth * 1,
+                          color: Colors.black,
+                          child: AspectRatio(
+                            aspectRatio: videoController.value.aspectRatio,
+                            child: VideoPlayer(videoController),
                           ),
-                        ],
+                        ),
                       ),
-                      child: languageBar(),
-                    ),
-                    Container(
-                        height: sizeHeight * 0.955,
+                      ),
+                      Container(
+                        height: sizeHeight * 0.2,
                         width: sizeWidth * 1,
-                        color: Colors.white,
-                        child: ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              String videoUrl;
-
-                              final kiosksId = advert.kiosksId;
-                              final advertisingsId = advert.advertisingsId;
-                              final advertisingName = advert.advertisingName;
-                              final advertisingImages = advert.advertisingImage;
-                              final advertisingImageType =
-                                  advert.advertisingImageType;
-                              final advertisingStartTime =
-                                  advert.advertisingStartTime;
-                              final advertisingEndTime =
-                                  advert.advertisingEndTime;
-                              final videoController =
-                                  VideoPlayerController.file(
-                                      File(advertisingImages));
-
-                              return (advertisingImageType == "video/mp4")
-                                  ? FutureBuilder(
-                                      future: videoController.initialize(),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState ==
-                                            ConnectionState.done) {
-                                          videoController.setLooping(true);
-                                          videoController.play();
-
-                                          return Column(children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                videoController.dispose();
-                                                LogFile(Log);
-                                                //   admob_times.startTimer(context);
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return WillPopScope(
-                                                        onWillPop: () async {
-                                                          // Return false to prevent the user from navigating back
-                                                          return false;
-                                                        },
-                                                        child: logo_screen(),
-                                                      );
-                                                    },
-                                                  ),
-                                                );
-                                              },
-                                              child: Container(
-                                                height: sizeHeight * 1,
-                                                width: sizeWidth * 1,
-                                                child: AspectRatio(
-                                                  aspectRatio: videoController
-                                                      .value.aspectRatio,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.black,
-                                                    ),
-                                                    child: VideoPlayer(
-                                                        videoController),
-                                                  ),
-                                                ),
+                        child: Column(
+                          children: [
+                            Transform.translate(
+                              offset: Offset(0.0, sizeHeight * -0.23),
+                              child: GestureDetector(
+                                onTap: () {
+                                  videoController.dispose();
+                                  LogFile(Log);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => logo_screen(),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  height: sizeHeight * 0.06,
+                                  width: sizeWidth * 0.5,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(sizeWidth * 0.05),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        spreadRadius: 2,
+                                        blurRadius: 4,
+                                        offset: Offset(2, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      AppLocalizations.of(context)!.touch,
+                                      style: TextStyle(
+                                        fontSize: sizeWidth * 0.042,
+                                        fontFamily: 'SukhumvitSet-Medium',
+                                        fontWeight: FontWeight.w700,
                                               ),
                                             ),
-                                            Container(
-                                                height: sizeHeight * 0.2,
-                                                width: sizeWidth * 1,
-                                                child: Column(children: [
-                                                  Transform.translate(
-                                                    offset: Offset(0.0, -350.0),
-                                                    child: Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                            onTap: () {
-                                                              videoController
-                                                                  .dispose();
-                                                              LogFile(Log);
-                                                              /*  admob_times
-                                                          .startTimer(context);*/
-
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) {
-                                                                    return WillPopScope(
-                                                                      onWillPop:
-                                                                          () async {
-                                                                        // Return false to prevent the user from navigating back
-                                                                        return false;
-                                                                      },
-                                                                      child:
-                                                                          logo_screen(),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Column(
-                                                                children: [
-                                                                  Container(
-                                                                    height:
-                                                                        sizeHeight *
-                                                                            0.06,
-                                                                    width:
-                                                                        sizeWidth *
-                                                                            0.5,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Color.fromRGBO(
-                                                                          255,
-                                                                          255,
-                                                                          255,
-                                                                          1),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(sizeWidth *
-                                                                              0.05),
-                                                                      boxShadow: [
-                                                                        BoxShadow(
-                                                                          color: Colors
-                                                                              .black
-                                                                              .withOpacity(0.2),
-                                                                          spreadRadius:
-                                                                              2,
-                                                                          blurRadius:
-                                                                              4,
-                                                                          offset: Offset(
-                                                                              2,
-                                                                              2),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    child:
-                                                                        Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center,
-
-                                                                      ///แตะเพื่อเริ่ม
-                                                                      child:
-                                                                          Text(
-                                                                        AppLocalizations.of(context)
-                                                                            .start,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              sizeWidth * 0.047,
-                                                                          fontFamily:
-                                                                              'SukhumvitSet-Medium',
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Transform
-                                                                      .translate(
-                                                                    offset: Offset(
-                                                                        0.0,
-                                                                        -35.0),
-                                                                    child: Image
-                                                                        .asset(
-                                                                      'assets/Tap.png',
-                                                                      height:
-                                                                          sizeHeight *
-                                                                              0.05,
-                                                                      width:
-                                                                          sizeWidth *
-                                                                              0.5,
-                                                                    ),
-                                                                  )
-                                                                ])),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ]))
-                                          ]);
+                                          ),
+                                          ),
+                                        ),),
+                                       ]))
+                                     ]);
                                         } else {
                                           return Container(
                                             width: sizeWidth * 1,
@@ -289,57 +189,45 @@ class _HomeState extends State<Ads_screen> {
                                       children: [
                                         GestureDetector(
                                           onTap: () {
-                                            //    videoController.dispose();
+                                            videoController.dispose();
                                             LogFile(Log);
-                                            //   admob_times.startTimer(context);
+                                         //   admob_times.startTimer(context);
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) {
-                                                  return WillPopScope(
-                                                    onWillPop: () async {
-                                                      // Return false to prevent the user from navigating back
-                                                      return false;
-                                                    },
-                                                    child: logo_screen(),
-                                                  );
-                                                },
+                                                builder: (context) =>
+                                                    logo_screen(),
                                               ),
                                             );
                                           },
                                           child: Container(
                                             height: sizeHeight * 1,
                                             width: sizeWidth * 1,
-                                            child: Image.file(
+                                            child:  Transform.translate(
+                                            offset: Offset(0.0, sizeHeight * -0.05),
+                                           child:Image.file(
                                               File(advertisingImages),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
+                                        ),
                                         Transform.translate(
-                                            offset: Offset(0.0, -350.0),
+                                            offset: Offset(0.0, sizeHeight *-0.23),
                                             child: Column(
                                               children: [
                                                 GestureDetector(
                                                   onTap: () {
-                                                    //    videoController.dispose();
+                                                    //    videoController.Rdispose();
                                                     LogFile(Log);
-                                                    // admob_times.startTimer(context);
-
+                                                    videoController.dispose();
+                                                   /* admob_times
+                                                        .startTimer(context);*/
                                                     Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
-                                                        builder: (context) {
-                                                          return WillPopScope(
-                                                            onWillPop:
-                                                                () async {
-                                                              // Return false to prevent the user from navigating back
-                                                              return false;
-                                                            },
-                                                            child:
-                                                                logo_screen(),
-                                                          );
-                                                        },
+                                                        builder: (context) =>
+                                                            logo_screen(),
                                                       ),
                                                     );
                                                   },
@@ -368,31 +256,31 @@ class _HomeState extends State<Ads_screen> {
                                                       ///แตะเพื่อเริ่ม
                                                       child: Text(
                                                         AppLocalizations.of(
-                                                                context)
-                                                            .start,
+                                                                context)!
+                                                            .touch,
                                                         style: TextStyle(
                                                           fontSize:
-                                                              sizeWidth * 0.047,
+                                                              sizeWidth * 0.042,
                                                           fontFamily:
                                                               'SukhumvitSet-Medium',
+                                                              fontWeight: FontWeight.w700
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                                Transform.translate(
-                                                  offset: Offset(0.0, -35.0),
-                                                  child: Image.asset(
-                                                    'assets/Tap.png',
-                                                    height: sizeHeight * 0.05,
-                                                    width: sizeWidth * 0.5,
-                                                  ),
-                                                )
+                                               
                                               ],
                                             ))
                                       ],
                                     );
-                            }))
+                            })),    
+                        Container(
+                          height: sizeHeight * 0.023,
+                          width: sizeWidth * 1,
+                          color: Color.fromRGBO(237, 28, 36, 1.0), // ค่าสีที่คุณต้องการใช้
+                          child: Bottombar(),
+                        )
                   ],
                 ),
               )

@@ -1,0 +1,5 @@
+transaction
+ส่งข้อมูลอาหาร 
+ยิงเลข mch_order_no เช็ค Status 
+status 0 ยังไม่จ่ายเงิน
+status 1 จ่ายเงินสำเร็จ

@@ -1,7 +1,7 @@
 class ImageController {
   final String image;
 
-  const ImageController({this.image});
+  const ImageController({required this.image});
 }
 
 List<ImageController> images = [

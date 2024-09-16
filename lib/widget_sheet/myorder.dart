@@ -1,660 +1,439 @@
 import 'dart:io';
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:screen/getxController.dart/amount_food.dart';
+import 'package:screen/getxController.dart/selection.dart';
 import 'package:screen/getxController.dart/textbox_controller.dart';
+import 'package:screen/widget_sheet/food_option.dart';
 import '../UI/Font/ColorSet.dart';
 import '../UI/Menu/total_in_widget.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
 import '../timeControl/adtime.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyOrder extends StatelessWidget {
-  final amount_food _amount_food = Get.put(amount_food());
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
   final TextBoxExampleController textbox_controller =
       Get.put(TextBoxExampleController());
   final dataKios _dataKios = Get.put(dataKios());
-  final String IndexOrder;
-  MyOrder({
-    this.IndexOrder,
-  });
-
+  final SelectionController selectionController =
+      Get.put(SelectionController());
+ var clickedId;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
     final int admob_time = 30;
     final AdMobTimeController adtimeController =
-        Get.put(AdMobTimeController(admob_time));
-
+        Get.put(AdMobTimeController(admob_time: admob_time));
     return GestureDetector(
         onTap: () {
           adtimeController.reset(); // Reset the time countdown
         },
-        child: SingleChildScrollView(
-            child: Container(
-                height: sizeHeight * 0.7,
-                width: sizeWidth * 0.5,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
-                  color: Color.fromARGB(255, 255, 255, 255),
-                ),
-                child: Column(children: [
-                  Column(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        top: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 340, right: 130, top: 80),
-                              child: Text("รายการอาหารของฉัน",
-                                  style: Fonts(
-                                      context, 0.045, true, Colors.black)),
+        child: Container(
+            height: sizeHeight * 0.87,
+            width: sizeWidth * 1,
+            color: Colors.white,
+            child: Column(children: [
+              Column(children: [
+                SizedBox( height: sizeHeight *0.025,),
+                Row(
+                    children: [
+                      SizedBox( width: sizeWidth *0.3,),
+                      Text("รายการอาหารของฉัน",
+                              style: Fonts(context, 0.048, true, Colors.black)),
+                      SizedBox(width:sizeWidth * 0.1),
+                     Container(
+                          height: sizeHeight * 0.05,
+                          width: sizeWidth * 0.1,
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              size: sizeWidth * 0.07,
                             ),
+                            onPressed: () {
+                              String Back =
+                                  'Go to menu page : ${_foodOptionController.formattedDate}';
+                              LogFile(Back);
+                              adtimeController.reset();
+                              getMealNamesByCategoryName(
+                             _foodOptionController.namecat.value);
+                              Navigator.of(context).pop();
+                            },
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 80, left: 30),
-                            child: Container(
-                              height: sizeHeight * 0.045,
-                              width: sizeWidth * 0.1,
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.close,
-                                  size: sizeWidth * 0.05,
-                                ),
-                                onPressed: () {
-                                  String Back =
-                                      'Go to menu page : ${_foodOptionController.formattedDate}';
-                                  LogFile(Back);
-                                  adtimeController.reset();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Column(children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 15, left: 10),
-                        child: Text("My Order",
-                            style: Fonts(context, 0.035, false, Colors.black)),
-                      ),
-                      Obx(() => _foodOptionController.numorder.value <= 0
-                          ? Container(
-                              color: Colors.white,
-                              height: sizeHeight * 0.4895,
-                              child: Center(
-                                child: Text('โปรดเลือกอาหารที่ท่านต้องการ',
-                                    style: Fonts(context, 0.045, true,
-                                        Color.fromARGB(255, 131, 129, 129))),
-                              ),
-                            )
-                          : Container(
-                              color: Colors.white,
-                              height: sizeHeight * 0.4895,
-                              child: Obx(
-                                () => ListView.builder(
-                                  itemCount:
-                                      _foodOptionController.orders.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    int currentIndex =
-                                        _foodOptionController.orders[index];
-                                    double totalForIndex =
-                                        _foodOptionController.calculateTotal(
-                                            currentIndex,
-                                            _foodOptionController
-                                                .categoryValues[index]);
-
-                                    final count = (_foodOptionController
-                                                .categoryValues[index] ==
-                                            'Steak')
-                                        ? _foodOptionController
-                                            .countListCat1[currentIndex]
-                                        : (_foodOptionController
-                                                    .categoryValues[index] ==
-                                                'Drinks')
-                                            ? _foodOptionController
-                                                .countListCat2[currentIndex]
-                                            : (_foodOptionController
-                                                            .categoryValues[
-                                                        index] ==
-                                                    'Foods')
-                                                ? _foodOptionController
-                                                    .countListCat3[currentIndex]
-                                                : (_foodOptionController
-                                                                .categoryValues[
-                                                            index] ==
-                                                        'Noodles')
-                                                    ? _foodOptionController
-                                                            .countListCat4[
-                                                        currentIndex]
-                                                    : _foodOptionController
-                                                            .countList[
-                                                        currentIndex];
-                                    final meal = (_foodOptionController
-                                                .categoryValues[index] ==
-                                            'Steak')
-                                        ? _dataKios.steakList[currentIndex]
-                                        : (_foodOptionController
-                                                    .categoryValues[index] ==
-                                                'Drinks')
-                                            ? _dataKios.drinkList[currentIndex]
-                                            : (_foodOptionController
-                                                            .categoryValues[
-                                                        index] ==
-                                                    'Foods')
-                                                ? _dataKios
-                                                    .foodList[currentIndex]
-                                                : (_foodOptionController
-                                                                .categoryValues[
-                                                            index] ==
-                                                        'Noodles')
-                                                    ? _dataKios.noodleList[
-                                                        currentIndex]
-                                                    : _dataKios.coffeeList[
-                                                        currentIndex];
-                                    final mealId = meal.mealId;
-                                    final mealNameTH = meal.mealNameTH;
-                                    final mealNameEN = meal.mealNameEN;
-                                    final mealImage = meal.mealImage;
-                                    final mealDescriptionTH =
-                                        meal.mealDescriptionTH;
-                                    final mealDescriptionEN =
-                                        meal.mealDescriptionEN;
-                                    final mealPrice = meal.mealPrice;
-                                    return Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20, bottom: 10),
-                                        child: Column(
-                                          children: [
-                                            Row(
+                        ),
+                    
+                    ],
+                  
+            ),
+                Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15, left: 10),
+                    child: Text("My Order",
+                        style: Fonts(context, 0.035, false, Colors.black)),
+                  ),
+                  Obx(() => selectionController.countAll.value  < 1
+                      ? Container(
+                          color: Colors.white,
+                          height: sizeHeight * 0.63,
+                          child: Center(
+                            child: Text(AppLocalizations.of(context)!.please_choose_food,
+                                style: Fonts(context, 0.045, true,Color.fromARGB(255, 131, 129, 129))),
+                          ),
+                        )
+                      : Container(
+                          color: Colors.white,
+                          height: sizeHeight * 0.63,
+                          child: Obx(() {
+                               return ListView.builder(
+                            itemCount: selectionController.allMeals.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final meal = selectionController.allMeals[index];
+                              final category = meal['category'];
+                              final mealID = meal['mealId'];
+                              final mealImage = meal['mealImage'];
+                              final mealNameEN = meal['mealNameEN'];
+                              final mealNameTH = meal['mealNameTH'];
+                              final mealNameCN = meal['mealNameCN'];
+                              final mealOptions = meal['mealoption'] ?? [];
+                              final mealindexs = meal['mealindexs'];
+                              final foodPrice = meal['foodPrice'];
+                              final amount = meal['amount'];
+                             
+                              return 
+                                  Column(
+                                    children: [
+                                      SizedBox(width:sizeWidth * 0.1),
+                                      GestureDetector(
+                                        onTap: () {
+                                         getMealNamesByCategoryName(
+                                         category);
+                                          //LogFile(food);
+                                          _foodOptionController.tapCount.value = 0;
+                                          adtimeController.reset();
+                                          showFlexibleBottomSheet(
+                                              initHeight: 0.861,
+                                              isDismissible: false,
+                                              context: context,
+                                              bottomSheetBorderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(sizeWidth*0.05),
+                                              topRight: Radius.circular(sizeWidth*0.05),
+                                              ),
+                                              builder: (context, controller, offset) {
+                                                return NotificationListener<OverscrollIndicatorNotification>(
+                                                  onNotification:(OverscrollIndicatorNotification notification) {
+                                                    notification.disallowIndicator();
+                                                    return false;
+                                                  },
+                                                  child: food_option(
+                                                  indexs: mealindexs,
+                                                  meal:_dataKios.mealNames[mealindexs],
+                                                  mealname:mealID.toString(), //mealNameEN,
+                                                  cat:category
+                                                  ),
+                                                );
+                                              });
+                                        },
+                                     child:  Row(
+                                        children: [
+                                          SizedBox(width:sizeWidth * 0.11),
+                                          Container(
+                                                height: sizeHeight * 0.145,
+                                                width: sizeWidth * 0.25,
+                                                decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(sizeWidth *0.03),
+                                               ),
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(sizeWidth*0.05),
+                                                  child: Image.file(
+                                                    File(mealImage),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )),
+                                       
+                                          Container(
+                                            height: sizeHeight * 0.18,
+                                            width: sizeWidth * 0.6,
+                                            child: Column(
                                               children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 120, right: 10),
-                                                  child: Container(
-                                                      height: sizeHeight * 0.13,
-                                                      width: sizeWidth * 0.22,
-                                                      decoration:
-                                                          BoxDecoration(),
-                                                      child: ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        child: Image.file(
-                                                          File(mealImage),
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      )),
-                                                ),
-                                                Container(
-                                                  color: Colors.white,
-                                                  height: sizeHeight * 0.18,
-                                                  width: sizeWidth * 0.6,
-                                                  child: Column(
+                                                  SizedBox(height:sizeHeight * 0.033),
+                                                Row(
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 5,
-                                                                left: 10,
-                                                                top: 60),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              width: sizeWidth *
-                                                                  0.47,
-                                                              child: Text(
-                                                                  (_dataKios.language
-                                                                              .value ==
-                                                                          'en')
-                                                                      ? mealNameEN.length <=
-                                                                              30
-                                                                          ? mealNameEN
-                                                                          : '${mealNameEN.substring(0, 25)}...'
-                                                                      : mealNameTH.length <=
-                                                                              30
-                                                                          ? mealNameTH
-                                                                          : '${mealNameTH.substring(0, 25)}...',
-                                                                  style: Fonts(
-                                                                      context,
-                                                                      0.036,
-                                                                      true,
-                                                                      Colors
-                                                                          .black)),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .only(
-                                                                      left: 10),
-                                                              child: IconButton(
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .cancel_outlined,
-                                                                  size:
-                                                                      sizeWidth *
-                                                                          0.045,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                                onPressed: () {
-                                                                  String
-                                                                      delete =
-                                                                      'Delete order : ${_foodOptionController.formattedDate}';
-                                                                  LogFile(
-                                                                      delete);
-                                                                  adtimeController
-                                                                      .reset();
-                                                                  int removedIndex =
-                                                                      currentIndex;
-
-                                                                  double
-                                                                      removedItemPrice =
-                                                                      _foodOptionController.calculateTotal(
-                                                                          currentIndex,
-                                                                          _foodOptionController
-                                                                              .categoryValues[index]);
-                                                                  _foodOptionController
-                                                                          .total_price
-                                                                          .value -=
-                                                                      removedItemPrice;
-                                                                  int removedItemCount =
-                                                                      count;
-                                                                  _foodOptionController
-                                                                          .numorder
-                                                                          .value -=
-                                                                      removedItemCount;
-                                                                  _foodOptionController
-                                                                      .orders
-                                                                      .removeAt(
-                                                                          index);
-                                                                  _foodOptionController
-                                                                      .categoryValues
-                                                                      .removeAt(
-                                                                          index);
-                                                                  _foodOptionController
-                                                                      .checkorders
-                                                                      .removeAt(
-                                                                          index);
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                      SizedBox(width:sizeWidth * 0.017),
+                                                      Container(
+                                                        width: sizeWidth * 0.47,
+                                                        child: Text(
+                                                          (_dataKios.language.value == 'en')
+                                                            ? mealNameEN.length <= 70
+                                                              ? mealNameEN
+                                                              : '${mealNameEN.substring(0, 70)}...'
+                                                          :(_dataKios.language.value == 'zh')
+                                                            ? mealNameCN.length <= 40
+                                                              ? mealNameCN
+                                                            :'${mealNameCN.substring(0, 40)}...'
+                                                      :mealNameTH.length <= 70
+                                                          ? mealNameTH
+                                                          : '${mealNameTH.substring(0, mealNameTH.length - 70)}...',
+                                                            style: Fonts(context,0.038,true,Colors.black)),
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                right: 80),
-                                                        child: Container(
-                                                          height: sizeHeight *
-                                                              0.047,
-                                                          width:
-                                                              sizeWidth * 0.5,
-                                                          child: Text(
-                                                              (_dataKios.language
-                                                                          .value ==
-                                                                      'en')
-                                                                  ? mealDescriptionEN
-                                                                              .length <=
-                                                                          35
-                                                                      ? mealDescriptionEN
-                                                                      : '${mealDescriptionEN.substring(0, 70)}...'
-                                                                  : mealDescriptionTH
-                                                                              .length <=
-                                                                          35
-                                                                      ? mealDescriptionTH
-                                                                      : '${mealDescriptionTH.substring(0, 70)}...',
-                                                              style: Fonts(
-                                                                  context,
-                                                                  0.024,
-                                                                  false,
-                                                                  Colors
-                                                                      .black)),
-                                                        ),
-                                                      ),
-                                                      Obx(
-                                                        () => Container(
-                                                          height: sizeHeight *
-                                                              0.035,
-                                                          child: Row(
-                                                            children: [
-                                                              //ลดจำนวนอาหาร
-                                                              IconButton(
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .remove_circle_outline,
-                                                                  size:
-                                                                      sizeWidth *
-                                                                          0.04,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                                onPressed: () {
-                                                                  String
-                                                                      remove =
-                                                                      'Remove ${mealNameEN} -1(MyOrder) : ${_foodOptionController.formattedDate}';
-                                                                  LogFile(
-                                                                      remove);
-                                                                  adtimeController
-                                                                      .reset();
-                                                                  _foodOptionController
-                                                                      .numordercheck
-                                                                      .value = true;
-                                                                  _foodOptionController
-                                                                      .removeCount
-                                                                      .value++;
-
-                                                                  double
-                                                                      removedItemPrice =
-                                                                      _foodOptionController.calculateTotal(
-                                                                          currentIndex,
-                                                                          _foodOptionController
-                                                                              .categoryValues[index]);
-                                                                  int counts = (_foodOptionController.categoryValues[
-                                                                              index] ==
-                                                                          'Steak')
-                                                                      ? _foodOptionController
-                                                                              .countListCat1[
-                                                                          currentIndex]
-                                                                      : (_foodOptionController.categoryValues[index] ==
-                                                                              'Drinks')
-                                                                          ? _foodOptionController
-                                                                              .countListCat2[currentIndex]
-                                                                          : (_foodOptionController.categoryValues[index] == 'Foods')
-                                                                              ? _foodOptionController.countListCat3[currentIndex]
-                                                                              : (_foodOptionController.categoryValues[index] == 'Noodles')
-                                                                                  ? _foodOptionController.countListCat4[currentIndex]
-                                                                                  : _foodOptionController.countList[currentIndex];
-                                                                  int deleteItem =
-                                                                      (removedItemPrice /
-                                                                              counts)
-                                                                          .toInt();
-                                                                  //
-                                                                  _foodOptionController
-                                                                      .removeTotallist
-                                                                      .add((deleteItem *
-                                                                          _foodOptionController
-                                                                              .removeCount
-                                                                              .value));
-                                                                  //
-                                                                  _foodOptionController
-                                                                      .removeTotal
-                                                                      .value += _foodOptionController
-                                                                          .removeTotallist[
-                                                                      index];
-                                                                  print(
-                                                                      "removeTotal ${_foodOptionController.removeTotal.value}");
-                                                                  print(
-                                                                      "removeTotallist ${_foodOptionController.removeTotallist[index]}");
-                                                                  //ลดจำนวนอาหารทีละ 1
-                                                                  _foodOptionController.decrement(
-                                                                      currentIndex,
-                                                                      _foodOptionController
-                                                                              .categoryValues[
-                                                                          index]);
-
-                                                                  if ((_foodOptionController.categoryValues[
-                                                                              index] ==
-                                                                          'Steak')
-                                                                      ? _foodOptionController.countListCat1[
-                                                                              currentIndex] <
-                                                                          1
-                                                                      : (_foodOptionController.categoryValues[index] ==
-                                                                              'Drinks')
-                                                                          ? _foodOptionController.countListCat2[currentIndex] <
-                                                                              1
-                                                                          : (_foodOptionController.categoryValues[index] == 'Foods')
-                                                                              ? _foodOptionController.countListCat3[currentIndex] < 1
-                                                                              : (_foodOptionController.categoryValues[index] == 'Noodles')
-                                                                                  ? _foodOptionController.countListCat4[currentIndex] < 1
-                                                                                  : _foodOptionController.countList[currentIndex] < 1) {
-                                                                    _foodOptionController
-                                                                        .orders
-                                                                        .removeAt(
-                                                                            index);
-                                                                    _foodOptionController
-                                                                        .categoryValues
-                                                                        .removeAt(
-                                                                            index);
-                                                                    _foodOptionController
-                                                                        .checkorders
-                                                                        .removeAt(
-                                                                            index);
-                                                                  }
-
-                                                                  //ลดราคาทีละ 1
-                                                                  _foodOptionController
-                                                                          .total_price
-                                                                          .value -=
-                                                                      deleteItem;
-
-                                                                  //ลดจำนวนอาหารในตะกร้าทั้งหมด
-                                                                  _foodOptionController
-                                                                      .numorder--;
-
-                                                                  print(
-                                                                      'categoryValues${_foodOptionController.categoryValues}');
-                                                                },
-                                                              ),
-                                                              //จำนวนอาหาร
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                            .only(
-                                                                        top:
-                                                                            10),
-                                                                child:
-                                                                    Container(
-                                                                  height:
-                                                                      sizeHeight *
-                                                                          0.025,
-                                                                  width:
-                                                                      sizeWidth *
-                                                                          0.07,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  child: Center(
-                                                                    child: Text(
-                                                                      "${_foodOptionController.countValue(currentIndex, _foodOptionController.categoryValues[index])}",
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            sizeWidth *
-                                                                                0.035,
-                                                                        color: Color.fromARGB(
-                                                                            255,
-                                                                            0,
-                                                                            0,
-                                                                            0),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              //เพิ่มจำนวนอาหาร
-                                                              IconButton(
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .add_circle_outline,
-                                                                  size:
-                                                                      sizeWidth *
-                                                                          0.04,
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                                onPressed: () {
-                                                                  String add =
-                                                                      'Add ${mealNameEN} +1(MyOrder) : ${_foodOptionController.formattedDate}';
-                                                                  LogFile(add);
-                                                                  _foodOptionController
-                                                                      .pushCount
-                                                                      .value++;
-
-                                                                  _foodOptionController
-                                                                      .numordercheck
-                                                                      .value = true;
-
-                                                                  adtimeController
-                                                                      .reset();
-                                                                  int counts = (_foodOptionController.categoryValues[
-                                                                              index] ==
-                                                                          'Steak')
-                                                                      ? _foodOptionController
-                                                                              .countListCat1[
-                                                                          currentIndex]
-                                                                      : (_foodOptionController.categoryValues[index] ==
-                                                                              'Drinks')
-                                                                          ? _foodOptionController
-                                                                              .countListCat2[currentIndex]
-                                                                          : (_foodOptionController.categoryValues[index] == 'Foods')
-                                                                              ? _foodOptionController.countListCat3[currentIndex]
-                                                                              : (_foodOptionController.categoryValues[index] == 'Noodles')
-                                                                                  ? _foodOptionController.countListCat4[currentIndex]
-                                                                                  : _foodOptionController.countList[currentIndex];
-                                                                  double
-                                                                      plusItemPrice =
-                                                                      _foodOptionController.calculateTotal(
-                                                                          currentIndex,
-                                                                          _foodOptionController
-                                                                              .categoryValues[index]);
-                                                                  int plusItem =
-                                                                      (plusItemPrice /
-                                                                              counts)
-                                                                          //
-                                                                          .toInt();
-                                                                  _foodOptionController
-                                                                      .pushTotallist
-                                                                      .add((plusItem *
-                                                                          _foodOptionController
-                                                                              .pushCount
-                                                                              .value));
-                                                                  //
-                                                                  _foodOptionController
-                                                                          .pushTotal +=
-                                                                      _foodOptionController
-                                                                              .pushTotallist[
-                                                                          index];
-                                                                  print(
-                                                                      "pushTotal ${_foodOptionController.pushTotal.value}");
-                                                                  print(
-                                                                      "pushTotallist ${_foodOptionController.pushTotallist[index]}");
-                                                                  //เพิ่มจำนวนอาหารทีละ 1
-                                                                  _foodOptionController.increment(
-                                                                      currentIndex,
-                                                                      _foodOptionController
-                                                                              .categoryValues[
-                                                                          index]);
-                                                                  //เพิ่มราคาทีละ 1
-                                                                  _foodOptionController
-                                                                          .total_price
-                                                                          .value +=
-                                                                      plusItem;
-
-                                                                  //เพิ่มจำนวนอาหารในตะกร้าทั้งหมด
-                                                                  _foodOptionController
-                                                                      .numorder++;
-                                                                },
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Obx(() => Row(
-                                                            children: [
-                                                              SizedBox(
-                                                                width:
-                                                                    sizeWidth *
-                                                                        0.01,
-                                                              ),
-                                                              Container(
-                                                                height:
-                                                                    sizeHeight *
-                                                                        0.03,
-                                                                width:
-                                                                    sizeWidth *
-                                                                        0.24,
-                                                                child: Text(
-                                                                    '฿ ${_foodOptionController.calculateTotal(currentIndex, _foodOptionController.categoryValues[index])}',
-                                                                    style: Fonts(
-                                                                        context,
-                                                                        0.035,
-                                                                        false,
-                                                                        Colors
-                                                                            .black)),
-                                                              ),
-                                                            ],
-                                                          )),
                                                     ],
                                                   ),
+                                                  SizedBox(width: sizeWidth *0.005,),
+                                              Container(
+                                              height: sizeHeight * 0.047,
+                                              width: sizeWidth * 0.56,
+                                              child: Text(
+                                              _buildOptionsText(mealOptions),
+                                              style: Fonts(context, 0.028, false, Colors.black),
+                                                 ),
                                                 ),
-                                              ],
+                                              
+                                                Container(
+                                                  height: sizeHeight * 0.06,
+                                                  child: Row(
+                                                    children: [
+                                                      SizedBox(width: sizeWidth*0.02,),
+                                                      Container(
+                                                            height: sizeHeight *0.7,
+                                                            width: sizeWidth * 0.2, 
+                                                            child: Align(
+                                                              alignment: Alignment.bottomLeft,
+                                                              child: Text(
+                                                                  '${foodPrice} ฿',style: Fonts(context,0.04,true, Colors.black)),
+                                                            ),
+                                                          ),
+                                                      Container(
+                                                        height: sizeHeight *0.08,
+                                                        width:  sizeWidth *0.35,
+                                                        child: Row(
+                                                          children: [
+                                                              SizedBox(width: sizeWidth*0.015,),
+                                                        Container(
+                                                          height: sizeHeight *0.08,
+                                                          width: sizeWidth *0.08,
+                                                          child: Align(
+                                                            alignment: Alignment.bottomCenter,
+                                                            child:GestureDetector(
+                                                           onTap: () {
+                                                                int price = (foodPrice / amount).toInt();
+                                                                String remove = 'Remove ${mealNameEN} -1(MyOrder) : ${_foodOptionController.formattedDate}';
+                                                                LogFile(remove);
+                                                                adtimeController.reset();
+                                                                if (amount >
+                                                                    1) {
+                                                                      meal['foodPrice'] -= price;
+                                                                      meal['amount']--;
+                                                                      selectionController.allMeals[index] = meal;
+                                                                      selectionController.countAll.value -= 1 ; 
+                                                                      selectionController.totalprices.value -= price;
+                                                                   //   selectionController.updateAmount(category,mealID.toString(), meal['amount'],meal['foodPrice']) ;
+                                                                     //  print('ลดจำนวน : ${meal['amount']}');
+                                                                }else{
+                                                                  meal['foodPrice'] -= price;
+                                                                  meal['amount']--;
+                                                                  selectionController.allMeals[index] = meal;
+                                                                  selectionController.countAll.value -= 1 ; 
+                                                                  selectionController.totalprices.value -= price;
+                                                                //  selectionController.updateAmount(category,mealID.toString(), meal['amount'],meal['foodPrice']) ;
+                                                                  selectionController.deleteMealByConditions(mealID.toString());
+                                                                  selectionController.deleteMealByCondition(mealID.toString());
+                                                                }                           
+                                                              },
+                                                            child: Container(
+                                                              height: sizeHeight * 0.04, 
+                                                              width: sizeWidth * 0.07, 
+                                                                child: Stack(
+                                                                alignment: Alignment.center,
+                                                                children: [
+                                                          
+                                                          Container(
+                                                            width: sizeWidth * 0.055, 
+                                                            height: sizeHeight * 0.055, 
+                                                            decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            shape: BoxShape.circle, 
+                                                              border: Border.all(
+                                                              color: Color.fromRGBO(160, 161, 163, 1), 
+                                                              width: 4.0, // ความกว้างของขอบ
+                                                          ),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 4,
+                                                                offset: Offset(3, 3)
+                                                              )
+                                                            ]
+                                                            ),
+                                                           ),
+                                                         Icon(
+                                                         Icons.remove,
+                                                          color: Color.fromRGBO(160, 161, 163, 1), 
+                                                          size: sizeHeight * 0.025, 
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        //จำนวนอาหาร
+                                                        Container(
+                                                            height: sizeHeight *0.08,
+                                                            width:
+                                                                sizeWidth * 0.07,
+                                                            color: Colors.white,
+                                                            child: Align(
+                                                              alignment: Alignment.bottomCenter,
+                                                                child:Text("${meal['amount']}",style: Fonts(context,0.038,true,Colors.black)
+                                                                    )),
+                                                          ),
+                                                        
+                                                        //เพิ่มจำนวนอาหาร
+                                                        Container(
+                                                          height: sizeHeight *0.08,
+                                                          width: sizeWidth *0.08,
+                                                          child: Align(
+                                                            alignment: Alignment.bottomCenter,
+                                                            child:GestureDetector(
+                                                            onTap: () {
+                                                                String add =
+                                                                    'Add ${mealNameEN} +1(MyOrder) : ${_foodOptionController.formattedDate}';
+                                                                LogFile(add);
+                                                                  int price = (foodPrice / amount).toInt(); // แปลงเป็น int
+                                                                      meal['foodPrice'] += price;
+                                                                      meal['amount']++;
+                                                                      selectionController.allMeals[index] = meal; 
+                                                                      selectionController.countAll.value += 1 ; 
+                                                                      selectionController.totalprices.value += price;           
+                                                                 //     selectionController.updateAmount(category,mealID.toString(), meal['amount'],meal['foodPrice']) ;
+                                                              },
+                                                               child: Container(
+                                                            height: sizeHeight * 0.04, 
+                                                            width: sizeWidth * 0.07, 
+                                                            child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                           // วงกลมสีแดง
+                                                          Container(
+                                                            width: sizeWidth * 0.055, 
+                                                            height: sizeHeight * 0.055, 
+                                                            decoration: BoxDecoration(
+                                                            color: Color.fromRGBO(255, 0, 23, 1),
+                                                            shape: BoxShape.circle, 
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 4,
+                                                                offset: Offset(3, 3)
+                                                              )
+                                                            ]
+                                                            ),
+                                                           ),
+                                                         // รูปบวก
+                                                         Icon(
+                                                         Icons.add,
+                                                          color: Colors.white, 
+                                                          size: sizeHeight * 0.025, 
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox( width: sizeWidth * 0.015,),
+                                                    Container(
+                                                      height: sizeHeight *0.08,
+                                                      width: sizeWidth *0.087,
+                                                      //color: Colors.blue,
+                                                      child: GestureDetector(
+                                                      onTap: () {
+                                                            String delete = 'Delete order : ${_foodOptionController.formattedDate}';
+                                                          LogFile(delete);
+                                                          selectionController.countAll.value -= (meal['amount'] as int);
+                                                          selectionController.totalPrice.value -=  (meal['foodPrice'] as int);
+                                                          selectionController.deleteMealByConditions(mealID.toString());
+                                                          selectionController.deleteMealByCondition(mealID.toString());
+                                                          adtimeController.reset();
+                                                        },
+                                                        child: Align(
+                                                          alignment: Alignment.bottomCenter,
+                                                          child: Image.asset('assets/Remove.png'),
+                                                        ) ,
+                                                      ) )
+                                                        ],
+                                                        ),
+                                                      ),
+                                              ]),
+                                               
+                                            )],
                                             ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 120,
-                                                  left: 120,
-                                                  top: 10),
-                                              child: Container(
-                                                color: Color.fromARGB(
-                                                    255, 0, 0, 0),
-                                                width: sizeWidth * 0.8,
-                                                height: sizeHeight * 0.0008,
-                                              ),
-                                            ),
-                                          ],
-                                        ));
-                                  },
-                                ),
-                              ),
-                            ))
-                    ]),
-                    Container(
-                      height: sizeHeight * 0.0795,
-                      width: sizeWidth * 1,
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 200, 194, 194),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25), // วงรีด้านบนซ้าย
-                          topRight: Radius.circular(25), // วงรีด้านบนขวา
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                              height: sizeHeight * 0.2,
-                              width: sizeWidth * 1,
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 200, 194, 194),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20.0), // ซ้ายบน
-                                  topRight: Radius.circular(20.0), // ขวาบน
-                                ),
-                              ),
-                              child: TotalWiget()),
-                        ],
-                      ),
-                    )
-                  ])
-                ]))));
+                                          ),
+                                        ],
+                                      ),
+                                      ),
+                                       SizedBox(width: sizeWidth *0.18,),
+                                       Container(
+                                        color: Colors.black,
+                                        width: sizeWidth * 0.8,
+                                        height: sizeHeight * 0.0008,
+                                      ),
+                                    ],
+                                  );
+                            },
+                          );
+                      }   ))
+              )]),
+              SizedBox(
+                height: sizeHeight *0.025,
+              ),
+                TotalWiget(),
+              ])
+            ])));
   }
 }
+
+String _buildOptionsText(List<Map<String, dynamic>> mealOptions) {
+ final dataKios _dataKios = Get.put(dataKios());
+ if (mealOptions == null || mealOptions.isEmpty) {
+    return '...';
+  }
+
+  // แยกค่า 'Extra' หรือ 'พิเศษ' ออกจากค่าที่เหลือ
+  final regularOptions = <String>[];
+  final specialOptions = <String>[];
+
+  for (final option in mealOptions) {
+    final value = option['value'] ?? '';
+
+    // ตรวจสอบว่าค่า value เป็น Map<String, dynamic>
+    if (value is Map<String, dynamic>) {
+      // ใช้ค่าจากภาษาไทยหรือภาษาอื่น ๆ ตามต้องการ
+      final displayValue =   (_dataKios.language.value == 'en') ? value['en'] :(_dataKios.language.value == 'zh') ? value['cn'] :value['th'];
+      
+      if (displayValue == 'Extra' || displayValue == 'พิเศษ') {
+        specialOptions.add('*$displayValue');
+      } else {
+        regularOptions.add(displayValue);
+      }
+    } else {
+      // กรณีที่ value เป็น String ธรรมดา
+      if (value == 'Extra' || value == 'พิเศษ') {
+        specialOptions.add('*$value');
+      } else {
+        regularOptions.add(value);
+      }
+    }
+  }
+
+  // รวมค่าปกติและค่าพิเศษ
+  final optionsText = [...regularOptions, ...specialOptions].join(' / ');
+
+  return optionsText;
+}
+
+

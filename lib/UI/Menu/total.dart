@@ -1,224 +1,219 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../alert/backhome.dart';
+import 'package:screen/getxController.dart/selection.dart';
+import 'package:screen/widget_sheet/payment_option.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../api/Kios_API.dart';
-import '../../getxController.dart/amount_food.dart';
 import '../../getxController.dart/save_menu.dart';
-import '../../screen/selection_screen.dart';
-import '../../screen/setting_screen.dart';
 import '../../timeControl/adtime.dart';
 import '../../widget_sheet/myorder.dart';
-import '../../widget_sheet/payment_option.dart';
 
 class totalUI extends StatelessWidget {
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
-  final dataKios _dataKios = Get.put(dataKios());
-  final int IndexOrder;
-  totalUI({this.IndexOrder});
+  final SelectionController selectionController =
+      Get.put(SelectionController());
   @override
   Widget build(BuildContext context) {
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
     final int admob_time = 60;
     final AdMobTimeController adtimeController =
-        Get.put(AdMobTimeController(admob_time));
+        Get.put(AdMobTimeController(admob_time: admob_time));
     final DateLog = _foodOptionController.formattedDate;
     String Back = 'Back Select a dining location page : ${DateLog}';
     return Container(
-      height: sizeHeight * 0.08,
+      color: Color.fromRGBO(246, 246, 246, 1),
       width: sizeWidth * 1,
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(206, 206, 206, 1),
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: sizeHeight * 0.08,
-            width: sizeWidth * 0.7,
-            decoration: BoxDecoration(
-              color: Color.fromARGB(255, 200, 194, 194),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.0),
-              ),
-            ),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    backHome(context);
-                  },
-                  child: Transform.translate(
-                    offset: Offset(30.0, -20.0),
-                    child: Transform.scale(
-                      scale: 1.3, // ปรับขนาดตามความต้องการ
-                      child: Image.asset(
-                        'assets/Homes.png',
-                        height: sizeHeight * 1, // ความสูงของรูปภาพ
-                      ),
-                    ),
-                  ),
-                ),
-                Column(
-                  children: [
-                    Transform.translate(
-                        offset: Offset(0.0, 20.0),
-                        child: Obx(() => Container(
-                              height: sizeHeight * 0.022,
-                              width: sizeWidth * 0.05,
-                              decoration: BoxDecoration(
-                                color:
-                                    (_foodOptionController.numorder.value > 0)
-                                        ? Colors.green
-                                        : Colors.black,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Center(
-                                  child: Obx(
-                                () => Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 10,
-                                  ),
-                                  child: Text(
-                                    ' ${_foodOptionController.numorder.value}',
-                                    style: GoogleFonts.kanit(
-                                        fontSize: sizeHeight * 0.015,
-                                        color: (_foodOptionController
-                                                    .numorder.value >
-                                                0)
-                                            ? Colors.black
-                                            : Colors.white),
-                                  ),
-                                ),
-                              )),
-                            ))),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 40),
-                      child: GestureDetector(
-                        onTap: () {
-                          String moyorder =
-                              'Open my food page : ${_foodOptionController.formattedDate}';
-                          LogFile(moyorder);
-                          _foodOptionController.tapCount.value = 0;
-                          adtimeController.reset();
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              isDismissible: false,
-                              enableDrag: false,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30),
-                                  topRight: Radius.circular(30),
-                                ),
-                              ),
-                              builder: (context) {
-                                return NotificationListener<
-                                    OverscrollIndicatorNotification>(
-                                  onNotification:
-                                      (OverscrollIndicatorNotification
-                                          notification) {
-                                    notification.disallowIndicator();
-                                    return false;
-                                  },
-                                  child: MyOrder(
-                                      IndexOrder:
-                                          _foodOptionController.namecat.value),
-                                );
-                              });
-                        },
-                        child: Transform.translate(
-                          offset: Offset(-50.0, -5.0),
-                          child: Image.asset(
-                            'assets/basket.png',
-                            height: sizeHeight * 0.04,
-                            width: sizeWidth * 0.22,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10, right: 20),
-                      child: Obx(
-                        () => Text(
-                          '${_foodOptionController.total_price.value} ฿',
-                          style: TextStyle(
-                            fontSize: sizeWidth * 0.05,
-                            fontFamily: 'SukhumvitSet-Medium',
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+      child: Container(
+        height: sizeHeight * 0.12,
+        width: sizeWidth * 0.7,
+        color: Color.fromRGBO(246, 246, 246, 1),
+        child: Row(
+          children: [
+            SizedBox(width: sizeWidth * 0.1,),
+            Container(
+              height: sizeHeight * 0.06,
+              width: sizeWidth * 0.8,
+               decoration: BoxDecoration(
+              color: Colors.white, 
+              boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.25), 
+                spreadRadius: 2, 
+                blurRadius: 4, 
+                offset: Offset(4, 4), 
                 ),
               ],
+              borderRadius: BorderRadius.circular(30), 
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              String payment =
-                  'Open the payment options page : ${_foodOptionController.formattedDate}';
-              LogFile(payment);
-              _foodOptionController.tapCount.value = 0;
-              adtimeController.reset();
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  useRootNavigator: true,
-                  isDismissible: false,
-                  enableDrag: false,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(20)),
+              child: Row(
+                children: [
+                  Column(
+                    children: [
+                      Transform.translate(
+                        offset: Offset(sizeWidth * 0.0, sizeHeight * 0.002),
+                        child:Container(
+                                height: sizeHeight * 0.022,
+                                width: sizeWidth * 0.05,
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Obx(
+                                  () =>Transform.translate(
+                                    offset: Offset(
+                                      sizeWidth * (
+                                      selectionController.countAll.value > 99 ? 0.004 : 
+                                      selectionController.countAll.value > 9 ? 0.0045  : 
+                                      0.011 
+                                        ),
+                                      sizeHeight * (selectionController.countAll.value > 99 ? 0.003
+                                     :0.0 )),
+                                      child:  Container(
+                                        height: sizeHeight * 0.022,
+                                        width: sizeWidth * 0.05,
+                                        child: Text(
+                                        ' ${selectionController.countAll.value}',
+                                        style: GoogleFonts.kanit(
+                                            fontSize: sizeHeight * (selectionController.countAll.value > 99 ? 0.0115 :0.015),
+                                            color: Colors.white),
+                                              ),
+                                      ),
+                                ))
+                      )),
+                       GestureDetector(
+                          onTap: () {
+                            String moyorder =
+                                'Open my food page : ${_foodOptionController.formattedDate}';
+                            LogFile(moyorder);
+                            _foodOptionController.tapCount.value = 0;
+                            adtimeController.reset();
+                            showFlexibleBottomSheet(
+                                initHeight: 0.861,
+                                isDismissible: false,
+                                context: context,
+                                bottomSheetBorderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(sizeWidth*0.05),
+                                topRight: Radius.circular(sizeWidth*0.05),
+                                ),
+                                builder: (context, controller, offset) {
+                                  return NotificationListener<
+                                      OverscrollIndicatorNotification>(
+                                    onNotification:
+                                        (OverscrollIndicatorNotification
+                                            notification) {
+                                      notification.disallowIndicator();
+                                      return false;
+                                    },
+                                    child: MyOrder(),
+                                  );
+                                });
+                          },
+                            child: Transform.translate(
+                          offset: Offset(sizeWidth * -0.025, sizeHeight * -0.01),
+                          child: Image.asset(
+                              'assets/basket.png',
+                              height: sizeHeight * 0.037,
+                              width: sizeWidth * 0.2,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                  )],
                   ),
-                  builder: (context) {
-                    return WillPopScope(
-                      onWillPop: () async {
-                        return false;
-                      },
-                      child: BottomSheetContent(IndexOrder: IndexOrder),
-                    );
-                  });
-            },
-            child: Obx(() => Container(
-                  height: sizeHeight * 0.08,
-                  width: sizeWidth * 0.3,
-                  decoration: BoxDecoration(
-                    color: (_foodOptionController.numorder.value > 0)
-                        ? Colors.green
-                        : Color.fromRGBO(136, 136, 136, 1),
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(20.0),
-                    ),
+                  SizedBox(
+                    width: sizeWidth * 0.13,
                   ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Text(
-                        'ชำระเงิน',
-                        style: TextStyle(
-                          fontSize: sizeWidth * 0.047,
-                          fontFamily: 'SukhumvitSet-Medium',
-                          fontWeight: FontWeight.bold,
+                      Obx(
+                          () => Container(
+                            width: sizeWidth *0.25,
+                            child: Text(
+                            '${selectionController.totalPrice.value} ฿',
+                              style: TextStyle(
+                                fontSize: sizeWidth * 0.042,
+                                fontFamily: 'SukhumvitSet-Medium',
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                          ),
+                   ),
+                    SizedBox(
+                    width: sizeWidth * 0.025,
+                  ),
+                  GestureDetector(
+              onTap: () {
+                String payment =
+                    'Open the payment options page : ${_foodOptionController.formattedDate}';
+                LogFile(payment);
+                _foodOptionController.tapCount.value = 0;
+                adtimeController.reset();
+                showFlexibleBottomSheet(
+                    initHeight: 0.861,
+                    isDismissible: false,
+                    context: context,
+                    bottomSheetBorderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(sizeWidth*0.05),
+                    topRight: Radius.circular(sizeWidth*0.05),
+                     ),
+                    builder: (context, controller, offset) {
+                      return NotificationListener<
+                              OverscrollIndicatorNotification>(
+                          onNotification:
+                              (OverscrollIndicatorNotification notification) {
+                            notification.disallowIndicator();
+                            return false;
+                          },
+                          child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(sizeWidth*0.05),
+                                  topRight: Radius.circular(sizeWidth*0.05),
+                                ),
+                              ),
+                              child: BottomSheetContent()));
+                    });
+              },
+              child: Obx(() => Container(
+                    height: sizeHeight * 0.042,
+                    width: sizeWidth * 0.17,
+                     decoration: BoxDecoration(
+                    color: (selectionController.countAll.value > 0)
+                    ? Color.fromARGB(255, 4, 193, 10)
+                    : Color.fromRGBO(255, 0, 23, 1),
+                    borderRadius: BorderRadius.all(
+                    Radius.circular(sizeWidth*0.05),
+                  ),
+                    boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25), // สีของเงา
+                      spreadRadius: 2, // การกระจายของเงา
+                      blurRadius: 4, // ความฟุ้งของเงา
+                      offset: Offset(4, 4), // การเลื่อนของเงา (x, y)
+                      ),
+                    ],
+                  ),
+                    child: Center(   
+                        child: Text(
+                          AppLocalizations.of(context)!.process3,
+                          style: TextStyle(
+                            fontSize: sizeWidth * 0.032,
+                            fontFamily: 'SukhumvitSet-Medium',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                )),
-          ),
-        ],
+                  )),
+              ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

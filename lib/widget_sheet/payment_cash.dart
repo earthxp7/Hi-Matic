@@ -14,13 +14,15 @@ class cash_bottomsheet extends StatelessWidget {
   final amount_food _amount_food = Get.put(amount_food());
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
-  final BottomSheetContent _bottomSheetContent = Get.put(BottomSheetContent());
-  final UsbDeviceController usbDeviceController =
-      Get.put(UsbDeviceController());
+
+  final UsbDeviceControllers usbDeviceController =
+      Get.put(UsbDeviceControllers());
   final int IndexOrder;
-  cash_bottomsheet({this.IndexOrder});
+  cash_bottomsheet({required this.IndexOrder});
   @override
   Widget build(BuildContext context) {
+    final BottomSheetContent _bottomSheetContent =
+        Get.put(BottomSheetContent());
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     final int successful_time = 60;
     final successful_time_controller =
@@ -29,7 +31,7 @@ class cash_bottomsheet extends StatelessWidget {
     final sizeWidth = MediaQuery.of(context).size.width;
     final int admob_time = 30;
     final AdMobTimeController adtimeController =
-        Get.put(AdMobTimeController(admob_time));
+        Get.put(AdMobTimeController(admob_time: admob_time));
     return GestureDetector(
         onTap: () {
           adtimeController.reset();
@@ -114,11 +116,11 @@ class cash_bottomsheet extends StatelessWidget {
                         onTap: () {
                           adtimeController.stopTimerAndReset();
                           successful_time_controller.startTimer(context);
-                          if (usbDeviceController.connected.value) {
+                          /*if (usbDeviceController.connected.value) {
                             usbDeviceController.prints();
                           } else {
                             print('Printer is not connected.');
-                          }
+                          }*/
                           showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,

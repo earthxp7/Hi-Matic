@@ -1,42 +1,38 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:screen/screen/setting_screen.dart';
 import '../UI/Font/ColorSet.dart';
-import '../timeControl/adtime.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void showLoginDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       TextEditingController passwordController = TextEditingController();
-      final int admob_time = 60;
-      final admob_times = Get.put(AdMobTimeController(admob_time));
       final sizeHeight = MediaQuery.of(context).size.height;
       final sizeWidth = MediaQuery.of(context).size.width;
 
       return WillPopScope(
           onWillPop: () async {
-            return false; // ป้องกันผู้ใช้ปิด AlertDialog โดยการคลิกที่พื้นที่ว่าง
+            return false;
           },
           child: AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(sizeWidth *0.01),
             ),
-            title: Row(
-              children: [
-                Container(
-                  width: sizeWidth * 0.5,
-                  height: sizeHeight * 0.07,
-                  child: Center(
-                    child: Text('กรุณายืนยันตัวตน!',
-                        style: Fonts(context, 0.05, true, Colors.black)),
+            title: 
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: sizeWidth * 0.6,
+                    height: sizeHeight * 0.07,
+                    //color: Colors.yellow,
+                    child: Center(
+                      child: Text(AppLocalizations.of(context)!.confirm_identity,
+                          style: Fonts(context, 0.048, true, Colors.black)),
+                    ),
                   ),
-                )
-              ],
-            ),
+                ),
+              
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -45,7 +41,7 @@ void showLoginDialog(BuildContext context) {
                     controller: passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      labelText: 'ใส่รหัสของคุณที่นี่',
+                      labelText: AppLocalizations.of(context)!.enter_password,
                       labelStyle: Fonts(context, 0.02, true,
                           Color.fromRGBO(214, 214, 214, 1)),
                       border: OutlineInputBorder(),
@@ -64,24 +60,24 @@ void showLoginDialog(BuildContext context) {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
                       padding:
                           EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text('ยกเลิก',
+                    child: Text(AppLocalizations.of(context)!.cancel,
                         style: Fonts(context, 0.035, true, Colors.white)),
                   ),
                   SizedBox(
-                    width: sizeWidth * 0.27,
+                    width: sizeWidth * 0.3,
                   ),
                   ElevatedButton(
                     onPressed: () {
                       String password = passwordController.text;
                       if (password == 'hitop') {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) {
@@ -97,22 +93,22 @@ void showLoginDialog(BuildContext context) {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('การยืนยันตัวตนไม่ผ่าน',
-                                style:
-                                    Fonts(context, 0.04, true, Colors.white)),
+                            content: Text(AppLocalizations.of(context)!.failed_identity,
+                                style:Fonts(context, 0.04, true, Colors.white)),
+                                      backgroundColor: Color.fromRGBO(237, 28, 36, 1.0),
                           ),
                         );
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
+                      backgroundColor: Colors.blue,
                       padding:
                           EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text('ตกลง',
+                    child: Text(AppLocalizations.of(context)!.agree,
                         style: Fonts(context, 0.035, true, Colors.white)),
                   )
                 ],

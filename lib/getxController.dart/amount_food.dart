@@ -34,7 +34,7 @@ class amount_food extends GetxController {
 
   void updateFoodItem(int index, FoodItem updatedFoodItem) {
     if (foodItemMap.containsKey(index)) {
-      foodItemMap[index].add(updatedFoodItem);
+      foodItemMap[index]!.add(updatedFoodItem);
     } else {
       foodItemMap[index] = [updatedFoodItem];
     }
@@ -196,8 +196,10 @@ class amount_food extends GetxController {
           count: count.value,
           price: calculateTotal(),
           special: special.value);
+      selectedOption:
+      '';
       selectedFoodItems.add(newFoodItem);
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => menu_screen()),
       );
@@ -210,8 +212,8 @@ class amount_food extends GetxController {
     egg2 = 0.obs;
     egg3 = 0.obs;
     pice = 0.obs;
-    selectOption(null, null);
-    selectOption_Spiciness(null, null);
+    selectOption('', '');
+    selectOption_Spiciness('', '');
     isChecked1.value = false;
     isChecked2.value = false;
     isChecked3.value = false;

@@ -1,7 +1,7 @@
 {
     "@@locale": "zh",
     "language": "改變語言",
-    "touch" : "點擊即可開始購物",
+    "touch" : "點擊開始點餐",
 
     "topic": "訂單流程",
     "start": "點擊開始",
@@ -9,7 +9,9 @@
     "process2": "選擇付款方式",
     "process3": "付款",
     "process4": "等待收到產品並更改",
-     
+    "choose":"選擇在餐廳用餐或訂購帶回家",
+    "dineIn": "在餐廳吃飯",
+    "takeAway":"訂外賣",
     "category": "類別 {index}",
     "@category": {"description": "Category",
     "placeholders":{
@@ -18,6 +20,10 @@
         }
 }
     },
+    
+    "note":"更多的",
+    "add_order": "添加到列表",
+     "ex":"例如，不要添加蔬菜",
     "total": "付款總額",
     "product_details":"產品詳情",
     "amount": "數量",
@@ -34,6 +40,7 @@
     "shopee_Pay":"Shopee Pay",
     "rabbit":"Rabbit Line Pay",
     "ali_Pay":"Ali Pay",
+    "total_payment":"付款總額",
 
     "wait":"請稍候..",
     "please_pay":"請付款",
@@ -51,7 +58,33 @@
     "receive_product":"请收到您的物品",
     "get_change":"请拿零钱",
     "thank_you":"感谢您使用该服务",
-    "unsuccessful":"付款失败"
+    "unsuccessful":"付款失败",
 
+    "important_details":"請選擇完整的食物詳細資料",
+    "check_food_list":"檢查您的食物資訊（例如肉類、辣度 ",
+    "food_prices":"食品價格",
+    "head_cancel_payment":"取消付款",
+    "detail_cancel_payment":"您想取消付款嗎？",
+    "agree":"同意",
+    "cancel":"取消",
+    "head_return_home_page":"返回主頁？",
+    "detail_return_home_page":"您選擇的食物項目將被刪除",
+    "head_no_food":"未找到您的食品",
+    "detail_no_food":"請在付款前選擇您的食物",
+    "please_choose_food":"請選擇您想要的食物",
+    "setting_page":"設定",
+    "confirm_close_app":"關閉應用程式?",
+    "confirm_open_network_system":"開啟網路系統頁面?",
+    "confirm_open_android_system":"打開Android系統頁面？",
+     "confirm_return_menu_page":"返回選單頁？",
+    "print_test":"列印測試",
+    "save_data":"儲存並應用",
+    "return_menu_page":"返回選單頁",
+    "confirm_identity":"請確認您的身分",
+    "enter_password":"輸入您的密碼",
+    "failed_identity":"身份驗證失敗",
+    "input_ip":"  輸入您的IP",
+    "no_payment_method":"未找到付款方式",
+    "detail_no_payment_method":"請選擇付款方式。準備好處理的資金"
 
 }

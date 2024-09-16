@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
+import 'package:screen/Appbar/report.dart';
 import 'package:screen/screen/selection_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../Appbar/language.dart';
 import '../api/Kios_API.dart';
 import '../getxController.dart/save_menu.dart';
@@ -14,15 +13,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class logo_screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     final dataKios _dataKios = Get.put(dataKios());
     final sizeHeight = MediaQuery.of(context).size.height;
     final sizeWidth = MediaQuery.of(context).size.width;
     final int admob_time = 60;
     final FoodOptionController _foodOptionController =
         Get.put(FoodOptionController());
-    final List<ImageController> myimage = images;
-    final admob_times = Get.put(AdMobTimeController(admob_time));
+    //final List<ImageController> myimage = images;
+    final admob_times = Get.put(AdMobTimeController(admob_time: admob_time));
     String Log =
         'Select a dining location : ${_foodOptionController.formattedDate}';
 
@@ -72,40 +70,56 @@ class logo_screen extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: sizeHeight * 0.13,
+                      height: sizeHeight * 0.34,
                     ),
                     Container(
-                      height: sizeHeight * 0.4,
-                      width: sizeWidth * 0.5,
-                      child: Transform.translate(
-                        offset: Offset(0.0, 70.0),
+                      height: sizeHeight * 0.15,
+                      width: sizeWidth * 0.6,
+                     // color: Colors.red,
                         child: Image.asset(
-                          myimage[0].image,
-                          height: sizeHeight * 0.35,
+                          'assets/logo.png',
+                          height: sizeHeight * 0.5,
                           width: sizeWidth * 1,
                           fit: BoxFit.contain,
                         ),
-                      ),
+                      
                     ),
-                    Container(
-                      height: sizeHeight * 0.08,
-                      child: Text(
-                        'NAME',
-                        style: TextStyle(
-                          fontSize: sizeWidth * 0.12,
-                          fontFamily: 'SukhumvitSet-Medium',
+                  /* Row(
+                     mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                          Text("H",
+                            style: TextStyle(
+                            fontSize: sizeWidth * 0.16,
+                            fontFamily: 'VarelaRound',
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(239, 17, 0, 1),
+                          ),
                         ),
-                      ),
-                    ),
-                    Text(
-                      'R E S T A U R A N T',
-                      style: TextStyle(
-                        fontSize: sizeWidth * 0.055,
-                        fontFamily: 'SukhumvitSet-Medium',
-                      ),
-                    ),
+                        Positioned(
+                          right: 8,  // จัดวางให้ชิดขวา
+                          top: 10,    // จัดวางให้ชิดบน
+                          child: CircleAvatar(
+                          radius: sizeWidth * 0.015, // กำหนดรัศมีของจุด
+                          backgroundColor: Color.fromRGBO(239, 17, 0, 1), // กำหนดสีพื้นหลังให้เป็นสีแดง
+                          ),
+                        ),
+                       ],
+                     ),
+                     Text("Matic",
+                            style: TextStyle(
+                            fontSize: sizeWidth * 0.15,
+                            fontFamily: 'Poppins-Black',
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),*/
+                   
                     SizedBox(
-                      height: sizeHeight * 0.12,
+                      height: sizeHeight * 0.257,
                     ),
                     Container(
                       height: sizeHeight * 0.06,
@@ -124,25 +138,25 @@ class logo_screen extends StatelessWidget {
                       ),
                       child: Align(
                         alignment: Alignment.center,
-
                         ///แตะเพื่อเริ่ม
                         child: Text(
-                          AppLocalizations.of(context).start,
+                          AppLocalizations.of(context)!.touch,
                           style: TextStyle(
-                            fontSize: sizeWidth * 0.047,
-                            fontFamily: 'SukhumvitSet-Medium',
-                          ),
+                          fontSize: sizeWidth * 0.042,
+                          fontFamily: 'SukhumvitSet-Medium',
+                           fontWeight: FontWeight.w700
+                           ),
                         ),
                       ),
                     ),
-                    Transform.translate(
-                      offset: Offset(0.0, -35.0),
-                      child: Image.asset(
-                        'assets/Tap.png',
-                        height: sizeHeight * 0.05,
-                        width: sizeWidth * 0.5,
-                      ),
-                    )
+                    SizedBox(
+                      height: sizeHeight * 0.125,
+                    ),
+                     Container(
+                      height: sizeHeight * 0.023,
+                      width: sizeWidth * 1,
+                      color: Color.fromRGBO(239, 17, 0, 1),
+                      child: Bottombar())
                   ],
                 ),
               ),

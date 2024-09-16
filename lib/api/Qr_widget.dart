@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class QrImageWidget extends StatelessWidget {
   final String base64String;
 
-  QrImageWidget({this.base64String});
+  QrImageWidget({required this.base64String});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class QrImageWidget extends StatelessWidget {
           return Container(
             width: 200,
             height: 200,
-            child: Image.memory(snapshot.data),
+            child: Image.memory(snapshot.data!),
           );
         } else {
           return Text('Unknown Error');
@@ -34,7 +34,7 @@ class QrImageWidget extends StatelessWidget {
     Uint8List bytes = base64Decode(base64String);
     ui.Codec codec = await ui.instantiateImageCodec(bytes);
     ui.FrameInfo frameInfo = await codec.getNextFrame();
-    ByteData byteData = await frameInfo.image.toByteData();
-    return byteData.buffer.asUint8List();
+    ByteData? byteData = await frameInfo.image.toByteData();
+    return byteData!.buffer.asUint8List();
   }
 }

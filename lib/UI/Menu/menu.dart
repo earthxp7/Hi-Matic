@@ -1,9 +1,9 @@
 import 'dart:io';
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:screen/getxController.dart/save_menu.dart';
 import '../../api/Kios_API.dart';
 import '../../timeControl/adtime.dart';
@@ -13,7 +13,7 @@ class menuUI extends StatelessWidget {
   final FoodOptionController _foodOptionController =
       Get.put(FoodOptionController());
   final dataKios _dataKios = Get.put(dataKios());
-  int clickedId = null;
+var clickedId;
   String removeDiacritics(String text) {
     return text.replaceAll(RegExp('[่ ้ ๊ ๋ ็ ั ์ ิ ี ึ ืุ ู]'), '');
   }
@@ -24,269 +24,275 @@ class menuUI extends StatelessWidget {
     final sizeWidth = MediaQuery.of(context).size.width;
     final int admob_time = 60;
     final AdMobTimeController adtimeController =
-        Get.put(AdMobTimeController(admob_time));
+        Get.put(AdMobTimeController(admob_time: admob_time));
     final DateLog = _foodOptionController.formattedDate;
-    String food = 'Open the food options page : ${DateLog}';
+    String food = 'Open the food options page : ${DateLog}';    
+   
     return Container(
-        color: Colors.white,
-        height: sizeHeight * 0.67,
-        child: Obx(
-          () => ListView.builder(
-            itemCount: (_foodOptionController.namecat.value == 'Steak')
-                ? _dataKios.steakList.length
-                : (_foodOptionController.namecat.value == 'Drinks')
-                    ? _dataKios.drinkList.length
-                    : (_foodOptionController.namecat.value == 'Foods')
-                        ? _dataKios.foodList.length
-                        : (_foodOptionController.namecat.value == 'Noodles')
-                            ? _dataKios.noodleList.length
-                            : _dataKios.coffeeList.length,
-            itemBuilder: (BuildContext context, int index) {
-              final meal = (_foodOptionController.namecat.value == 'Steak')
-                  ? _dataKios.steakList[index]
-                  : (_foodOptionController.namecat.value == 'Drinks')
-                      ? _dataKios.drinkList[index]
-                      : (_foodOptionController.namecat.value == 'Foods')
-                          ? _dataKios.foodList[index]
-                          : (_foodOptionController.namecat.value == 'Noodles')
-                              ? _dataKios.noodleList[index]
-                              : _dataKios.coffeeList[index];
-
-              final mealId = meal.mealId;
-              final mealNameTH = meal.mealNameTH;
-              final mealNameEN = meal.mealNameEN;
-              final mealImage = meal.mealImage;
-              final mealDescriptionTH = meal.mealDescriptionTH;
-              final mealDescriptionEN = meal.mealDescriptionEN;
-              final mealPrice = meal.mealPrice;
-
-              return Padding(
-                padding: const EdgeInsets.only(left: 150, right: 50),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          height: sizeHeight * 0.13,
-                          width: sizeWidth * 0.22,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    LogFile(food);
-                                    _foodOptionController.tapCount.value = 0;
-                                    adtimeController.reset();
-                                    clickedId = index;
-                                    showModalBottomSheet(
-                                        context: context,
-                                        isScrollControlled: true,
-                                        isDismissible: false,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(20),
-                                          ),
-                                        ),
-                                        builder: (context) {
-                                          return NotificationListener<
-                                              OverscrollIndicatorNotification>(
-                                            onNotification:
-                                                (OverscrollIndicatorNotification
-                                                    notification) {
-                                              notification.disallowIndicator();
-                                              return false;
-                                            },
-                                            child: food_option(
-                                              clickedId,
-                                              _foodOptionController
-                                                  .namecat.value,
-                                              currentIndex: clickedId,
-                                              category: _foodOptionController
-                                                  .namecat.value,
-                                            ),
-                                          );
-                                        });
-                                  },
-                                  child: Image.file(
-                                    File(mealImage),
-                                    fit: BoxFit.cover,
-                                  ))),
-                        ),
-                        Container(
-                          color: Colors.white,
-                          height: sizeHeight * 0.18,
-                          width: sizeWidth * 0.56,
-                          child: Column(
+          color: Color.fromRGBO(246, 246, 246, 1),
+          height: sizeHeight * 0.52,
+          width: sizeWidth * 1,
+          child: Obx(() =>  ListView.builder(
+              itemCount:_dataKios.mealNames.length,
+              itemBuilder: (BuildContext context, int index) {
+                final meal = _dataKios.mealNames[index];
+                final mealNameID = meal['id'] ?? 0; 
+                final mealNameTH = meal['name_th'] ?? ''; 
+                final mealNameEN = meal['name_en'] ?? ''; 
+                final mealNameCN = meal['name_cn'] ?? ''; 
+                final mealImage = meal['image'] ?? ''; 
+                final mealDescriptionTH = meal['description_th'] ?? '';
+                final mealDescriptionEN = meal['description_en'] ?? ''; 
+                final mealDescriptionCN = meal['description_cn'] ?? ''; 
+                final mealPrice = meal['price'] ?? '0';
+                
+                    return  Column(
+                        children: [
+                          Row(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 50),
-                                child: Container(
-                                  height: sizeHeight * 0.03,
-                                  width: sizeWidth * 0.5,
-                                  color: Colors.white,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      LogFile(food);
-                                      _foodOptionController.tapCount.value = 0;
-                                      adtimeController.reset();
-                                      clickedId = index;
-                                      showModalBottomSheet(
-                                          context: context,
-                                          isScrollControlled: true,
-                                          isDismissible: false,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.vertical(
-                                              top: Radius.circular(20),
-                                            ),
-                                          ),
-                                          builder: (context) {
-                                            return NotificationListener<
-                                                OverscrollIndicatorNotification>(
-                                              onNotification:
-                                                  (OverscrollIndicatorNotification
-                                                      notification) {
-                                                notification
-                                                    .disallowIndicator();
-                                                return false;
-                                              },
-                                              child: food_option(
-                                                clickedId,
-                                                _foodOptionController
-                                                    .namecat.value,
-                                                currentIndex: clickedId,
-                                                category: _foodOptionController
-                                                    .namecat.value,
-                                              ),
-                                            );
-                                          });
-                                    },
-                                    child: Obx(() => Text(
-                                          (_dataKios.language.value == 'en')
-                                              ? mealNameEN.length <= 70
-                                                  ? mealNameEN
-                                                  : '${mealNameEN.substring(0, 70)}...'
-                                              : mealNameTH.length <= 70
-                                                  ? mealNameTH
-                                                  : '${mealNameTH.substring(0, mealNameTH - 70)}...',
-                                          style: TextStyle(
-                                              fontSize: sizeWidth * 0.036,
-                                              fontFamily: 'SukhumvitSet-Medium',
-                                              fontWeight: FontWeight.bold),
-                                        )),
-                                  ),
+                          SizedBox(width: sizeWidth * 0.13,),
+                              Container(
+                                height: sizeHeight * 0.13,
+                                width: sizeWidth * 0.22,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(sizeWidth *0.03),
+                                  // color: Color.fromRGBO(255, 0, 23, 1)
                                 ),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          LogFile(food);
+                                          _foodOptionController.tapCount.value = 0;
+                                          adtimeController.reset();
+                                          clickedId = index;
+                                          showFlexibleBottomSheet(
+                                              initHeight: 0.861,
+                                              isDismissible: false,
+                                              context: context,
+                                              bottomSheetBorderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(sizeWidth*0.05),
+                                              topRight: Radius.circular(sizeWidth*0.05),
+                                              ),
+                                              builder: (context, controller, offset) {
+                                                return NotificationListener<
+                                                    OverscrollIndicatorNotification>(
+                                                  onNotification:
+                                                      (OverscrollIndicatorNotification
+                                                          notification) {
+                                                    notification.disallowIndicator();
+                                                    return false;
+                                                  },
+                                                  child: food_option(
+                                                 indexs: clickedId,
+                                                 meal: _dataKios.mealNames[clickedId],
+                                                  mealname :mealNameID.toString(),// mealNameEN,
+                                                   cat:_foodOptionController.namecat.value
+                                                  ),
+                                                );
+                                              });
+                                        },
+                                        child:
+                                        Image.file(
+                                          File(mealImage),
+                                          fit: BoxFit.cover,
+                                        ))),
                               ),
                               Container(
-                                height: sizeHeight * 0.044,
-                                width: sizeWidth * 0.5,
-                                child: Obx(() => Text(
-                                      (_dataKios.language.value == 'en')
-                                          ? mealDescriptionEN.length <= 70
-                                              ? mealDescriptionEN
-                                              : '${mealDescriptionEN.substring(0, 70)}...'
-                                          : mealDescriptionTH.length <= 70
-                                              ? mealDescriptionTH
-                                              : '${mealDescriptionTH.substring(0, 70)}...',
-                                      style: TextStyle(
-                                        fontSize: sizeWidth * 0.024,
-                                        fontFamily: 'SukhumvitSet-Medium',
-                                      ),
-                                    )),
-                              ),
-                              Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 70, left: 30),
-                                    child: Container(
-                                      height: sizeHeight * 0.04,
-                                      width: sizeWidth * 0.35,
-                                      child: Text(
-                                        '฿ ' + mealPrice.toString(),
-                                        style: TextStyle(
-                                          fontSize: sizeWidth * 0.035,
-                                          fontFamily: 'SukhumvitSet-Medium',
+                                color: Color.fromRGBO(246, 246, 246, 1),
+                                height: sizeHeight * 0.18,
+                                width: sizeWidth * 0.56,
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: sizeHeight *0.025,),
+                                     Container(
+                                        height: sizeHeight * 0.03,
+                                        width: sizeWidth * 0.5,
+                                        color: Color.fromRGBO(246, 246, 246, 1),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            LogFile(food);
+                                            _foodOptionController.tapCount.value = 0;
+                                            adtimeController.reset();
+                                            clickedId = index;
+                                            showFlexibleBottomSheet(
+                                                initHeight: 0.861,
+                                                isDismissible: false,
+                                                context: context,
+                                                bottomSheetBorderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(sizeWidth*0.05),
+                                                topRight: Radius.circular(sizeWidth*0.05),
+                                                ),
+                                                builder:
+                                                    (context, controller, offset) {
+                                                  return NotificationListener<
+                                                      OverscrollIndicatorNotification>(
+                                                    onNotification:
+                                                        (OverscrollIndicatorNotification
+                                                            notification) {
+                                                      notification
+                                                          .disallowIndicator();
+                                                      return false;
+                                                    },
+                                                    child: food_option(
+                                                        indexs: clickedId,
+                                                         meal: _dataKios.mealNames[clickedId],
+                                                         mealname :mealNameID.toString(), //mealNameEN,
+                                                          cat:_foodOptionController.namecat.value
+                                                    ),
+                                                  );
+                                                });
+                                          },
+                                          child: Obx(() => Text(
+                                                (_dataKios.language.value == 'en')
+                                                    ? mealNameEN.length <= 70
+                                                        ? mealNameEN
+                                                        : '${mealNameEN.substring(0, 70)}...'
+                                                    :(_dataKios.language.value == 'zh')
+                                                      ? mealNameCN.length <= 40
+                                                          ? mealNameCN
+                                                          :'${mealNameCN.substring(0, 40)}...'
+                                                      :mealNameTH.length <= 70
+                                                          ? mealNameTH
+                                                          : '${mealNameTH.substring(0, mealNameTH.length - 70)}...',
+                                                style: TextStyle(
+                                                    fontSize: sizeWidth * 0.036,
+                                                    fontFamily: 'SukhumvitSet-Medium',
+                                                    fontWeight: FontWeight.bold),
+                                              )),
                                         ),
                                       ),
+                                    
+                                    Container(
+                                      height: sizeHeight * 0.044,
+                                      width: sizeWidth * 0.5,
+                                      child: Obx(() => Text(
+                                            (_dataKios.language.value == 'en')
+                                                ? mealDescriptionEN.length <= 70
+                                                    ? mealDescriptionEN
+                                                    : '${mealDescriptionEN.substring(0, 70)}...'
+                                                 :(_dataKios.language.value == 'zh')
+                                                      ? mealDescriptionCN.length <= 35
+                                                          ? mealDescriptionCN
+                                                          :'${mealDescriptionCN.substring(0, 35)}...'
+                                                   : mealDescriptionTH.length <= 70
+                                                    ? mealDescriptionTH
+                                                    : '${mealDescriptionTH.substring(0, 70)}...',
+                                            style: TextStyle(
+                                              fontSize: sizeWidth * 0.024,
+                                              fontFamily: 'SukhumvitSet-Medium',
+                                            ),
+                                          )),
                                     ),
-                                  ),
-                                  Transform.translate(
-                                      offset: Offset(70.0, 35.0),
-                                      child: Builder(
-                                        builder: (context) => GestureDetector(
-                                            onTap: () {
-                                              LogFile(food);
-                                              _foodOptionController
-                                                  .tapCount.value = 0;
-                                              adtimeController.reset();
-                                              clickedId = index;
-                                              showModalBottomSheet(
-                                                  context: context,
-                                                  isScrollControlled: true,
-                                                  isDismissible: false,
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.vertical(
-                                                      top: Radius.circular(20),
-                                                    ),
-                                                  ),
-                                                  builder: (context) {
-                                                    return NotificationListener<
-                                                        OverscrollIndicatorNotification>(
-                                                      onNotification:
-                                                          (OverscrollIndicatorNotification
-                                                              notification) {
-                                                        notification
-                                                            .disallowIndicator();
-                                                        return false;
-                                                      },
-                                                      child: food_option(
-                                                        clickedId,
-                                                        _foodOptionController
-                                                            .namecat.value,
-                                                        currentIndex: clickedId,
-                                                        category:
-                                                            _foodOptionController
-                                                                .namecat.value,
-                                                      ),
-                                                    );
-                                                  });
-                                            },
-                                            child: Container(
-                                              height: sizeHeight * 0.04,
-                                              width: sizeWidth * 0.07,
-                                              child: IconButton(
-                                                icon: Icon(
-                                                  Icons
-                                                      .add_circle_outline_outlined,
-                                                  size: sizeHeight * 0.032,
-                                                  color: Colors.black,
-                                                ),
+                                    SizedBox(height: sizeHeight * 0.035,),
+                                    Row(
+                                      children: [
+                                        SizedBox(width: sizeWidth *0.025,),
+                                         Container(
+                                            height: sizeHeight * 0.04,
+                                            width: sizeWidth * 0.35,
+                                            child: Text(
+                                              mealPrice.toString() +  ' ฿',
+                                              style: TextStyle(
+                                                fontSize: sizeWidth * 0.035,
+                                                fontFamily: 'SukhumvitSet-Medium',
+                                                fontWeight: FontWeight.bold
                                               ),
-                                            )),
-                                      ))
-                                ],
+                                            ),
+                                          ),
+                                        
+                                          SizedBox( width: sizeWidth * 0.11,),
+                                          Container(
+                                            height: sizeHeight * 0.038,
+                                            width: sizeWidth * 0.07,
+                                            child: GestureDetector(
+                                                    onTap: () {
+                                                  LogFile(food);
+                                                _foodOptionController.tapCount.value =
+                                                    0;
+                                                adtimeController.reset();
+                                                clickedId = index;
+                                                showFlexibleBottomSheet(
+                                                    initHeight: 0.861,
+                                                    isDismissible: false,
+                                                    context: context,
+                                                    bottomSheetBorderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(sizeWidth*0.05),
+                                                    topRight: Radius.circular(sizeWidth*0.05),
+                                                    ),
+                                                    builder: (context, controller,
+                                                        offset) {
+                                                      return NotificationListener<
+                                                          OverscrollIndicatorNotification>(
+                                                        onNotification:
+                                                            (OverscrollIndicatorNotification
+                                                                notification) {
+                                                          notification
+                                                              .disallowIndicator();
+                                                          return false;
+                                                        },
+                                                        child: food_option(
+                                                            indexs: clickedId,
+                                                            meal: _dataKios.mealNames[clickedId],
+                                                            mealname : mealNameID.toString(),//mealNameEN,
+                                                            cat:_foodOptionController.namecat.value
+                                                                ),
+                                                              );
+                                                            });
+                                                          },
+                                                            child: Container(
+                                                            height: sizeHeight * 0.04, 
+                                                            width: sizeWidth * 0.07, 
+                                                            child: Stack(
+                                                            alignment: Alignment.center,
+                                                            children: [
+                                                           // วงกลมสีแดง
+                                                          Container(
+                                                            width: sizeWidth * 0.055, 
+                                                            height: sizeHeight * 0.055, 
+                                                            decoration: BoxDecoration(
+                                                            color: Color.fromRGBO(255, 0, 23, 1),
+                                                            shape: BoxShape.circle, 
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors.black.withOpacity(0.4),
+                                                                spreadRadius: 1,
+                                                                blurRadius: 4,
+                                                                offset: Offset(3, 3)
+                                                              )
+                                                            ]
+                                                            ),
+                                                           ),
+                                                         // รูปบวก
+                                                         Icon(
+                                                         Icons.add,
+                                                          color: Colors.white, 
+                                                          size: sizeHeight * 0.025, 
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  )
+                                            ),
+                                                                     
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 100),
-                      child: Container(
-                        color: Color.fromARGB(255, 0, 0, 0),
-                        width: sizeWidth * 0.8,
-                        height: sizeHeight * 0.0008,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ));
+                          SizedBox(width: sizeWidth *0.18,),
+                         Container(
+                              color: Color.fromRGBO(216, 217, 218, 1),
+                              width: sizeWidth * 0.8,
+                              height: sizeHeight * 0.0008,
+                            ),
+                        ],
+                    );
+                  },
+                ),         
+         ),
+    );
   }
 }
